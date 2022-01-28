@@ -3,7 +3,7 @@ import fs from 'fs'
 import path from 'path'
 
 export const folderRules = [{
-  name: 'htaccess',
+  name: 'folder.htaccess',
   description: 'Checks if .htaccess is present',
   run: (folder, { lint }) => {
     lint(
@@ -13,7 +13,7 @@ export const folderRules = [{
     )
   },
 }, {
-  name: 'robots',
+  name: 'folder.robots',
   description: 'Checks presence of robots.txt',
   run: (folder, { lint }) => {
     lint(

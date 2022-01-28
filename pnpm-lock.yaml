@@ -1,11 +1,13 @@
 lockfileVersion: 5.3
 
 specifiers:
+  chalk: ^5.0.0
   cheerio: ^1.0.0-rc.10
   glob: ^7.2.0
   sade: ^1.8.1
 
 dependencies:
+  chalk: 5.0.0
   cheerio: 1.0.0-rc.10
   glob: 7.2.0
   sade: 1.8.1
@@ -25,6 +27,11 @@ packages:
     dependencies:
       balanced-match: 1.0.2
       concat-map: 0.0.1
+    dev: false
+
+  /chalk/5.0.0:
+    resolution: {integrity: sha512-/duVOqst+luxCQRKEo4bNxinsOQtMP80ZYm7mMqzuh5PociNL0PvmHFvREJ9ueYL2TxlHjBcmLCdmocx9Vg+IQ==}
+    engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
     dev: false
 
   /cheerio-select/1.5.0:
