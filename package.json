@@ -1,0 +1,16 @@
+{
+  "name": "@und-pohlen/und-check",
+  "version": "0.0.1",
+  "description": "A testing suite for statically generated websites",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Lucas Nolte <hello@lucas-nolte.com>",
+  "license": "MIT",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.10",
+    "sade": "^1.8.1"
+  }
+}

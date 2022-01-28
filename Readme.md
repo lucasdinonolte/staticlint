@@ -1,0 +1,10 @@
+# und Check
+
+CLI tool to check the output of a static site generator for common errors.
+
+## Goal
+- A simple to use CLI to check for common errors.
+- Should return suitable exit codes, so it could stop the build, when run in CI
+- Should distinguish errors (severe, like a missing title tag) and warnings (annoying but not bad, like a stop word in the title tag)
+- Should be configurable through a config file at the project's root
+- Should allow users to inject their own tests via the config file
