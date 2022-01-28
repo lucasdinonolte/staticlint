@@ -5,12 +5,17 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
+    "cli": "node src/bin.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "und-check": "src/bin.js"
   },
   "author": "Lucas Nolte <hello@lucas-nolte.com>",
   "license": "MIT",
   "dependencies": {
     "cheerio": "^1.0.0-rc.10",
+    "glob": "^7.2.0",
     "sade": "^1.8.1"
   }
 }

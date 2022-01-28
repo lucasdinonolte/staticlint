@@ -16,7 +16,6 @@ export const folderRules = [{
   name: 'robots',
   description: 'Checks presence of robots.txt',
   run: (folder, { lint }) => {
-    console.log(path.join(folder, 'robots.txt'))
     lint(
       assert.strictEqual,
       fs.existsSync(path.join(folder, 'robots.txt')),
