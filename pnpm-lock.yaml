@@ -6,7 +6,7 @@ specifiers:
   glob: ^7.2.0
   ora: ^6.0.1
   sade: ^1.8.1
-  url-exist: ^3.0.0
+  url-exists-nodejs: ^0.2.3
 
 dependencies:
   chalk: 5.0.0
@@ -14,16 +14,9 @@ dependencies:
   glob: 7.2.0
   ora: 6.0.1
   sade: 1.8.1
-  url-exist: 3.0.0
+  url-exists-nodejs: 0.2.3
 
 packages:
-
-  /abort-controller/3.0.0:
-    resolution: {integrity: sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg==}
-    engines: {node: '>=6.5'}
-    dependencies:
-      event-target-shim: 5.0.1
-    dev: false
 
   /ansi-regex/6.0.1:
     resolution: {integrity: sha512-n5M855fKb2SsfMIiFFoVrABHJC8QtHwVx+mHWP3QcEqBHYienj5dHSgjbxtC0WEZXYt4wcD6zrQElDPhFuZgfA==}
@@ -154,11 +147,6 @@ packages:
     engines: {node: '>= 6'}
     dev: false
 
-  /data-uri-to-buffer/3.0.1:
-    resolution: {integrity: sha512-WboRycPNsVw3B3TL559F7kuBUM4d8CgMEvk6xEJlOp7OBPjt6G7z8WMWlD2rOFZLk6OYfFIUGsCOWzcQH9K2og==}
-    engines: {node: '>= 6'}
-    dev: false
-
   /defaults/1.0.3:
     resolution: {integrity: sha1-xlYFHpgX2f8I7YgUd/P+QBnz730=}
     dependencies:
@@ -194,21 +182,6 @@ packages:
 
   /entities/2.2.0:
     resolution: {integrity: sha512-p92if5Nz619I0w+akJrLZH0MX0Pb5DX39XOwQTtXSdQQOaYH03S1uIQp4mhOZtAXrxq4ViO67YTiLBo2638o9A==}
-    dev: false
-
-  /event-target-shim/5.0.1:
-    resolution: {integrity: sha512-i/2XbnSz/uxRCU6+NdVJgKWDTM427+MqYbkQzD321DuCQJUqOuJKIA0IM2+W2xtYHdKOmZ4dR6fExsd4SXL+WQ==}
-    engines: {node: '>=6'}
-    dev: false
-
-  /fetch-blob/2.1.2:
-    resolution: {integrity: sha512-YKqtUDwqLyfyMnmbw8XD6Q8j9i/HggKtPEI+pZ1+8bvheBu78biSmNaXWusx1TauGqtUUGx/cBb1mKdq2rLYow==}
-    engines: {node: ^10.17.0 || >=12.3.0}
-    peerDependencies:
-      domexception: '*'
-    peerDependenciesMeta:
-      domexception:
-        optional: true
     dev: false
 
   /fs.realpath/1.0.0:
@@ -265,33 +238,6 @@ packages:
     engines: {node: '>=12'}
     dev: false
 
-  /is-url-superb/5.0.0:
-    resolution: {integrity: sha512-jGkG59ra7/JlcV8ap3dsc0M79IgpuFU/obfsSf6X5D0z1NVvFTFuzt4ob7nfBTZEPbTwjGXVKNQDfWfPghapKQ==}
-    engines: {node: '>=10'}
-    dev: false
-
-  /ky-universal/0.9.1_ky@0.26.0:
-    resolution: {integrity: sha512-o0u8z6Lp8bZAevZWJkZXuQH4JGFIUM1FeHRdtdmcgSsEoP8Ane4TNJWtiv0UOYKRmYGlYsF15zX6kR1S31Q8sg==}
-    engines: {node: '>=14'}
-    peerDependencies:
-      ky: '>=0.26.0'
-      web-streams-polyfill: '>=3.0.1'
-    peerDependenciesMeta:
-      web-streams-polyfill:
-        optional: true
-    dependencies:
-      abort-controller: 3.0.0
-      ky: 0.26.0
-      node-fetch: 3.0.0-beta.9
-    transitivePeerDependencies:
-      - domexception
-    dev: false
-
-  /ky/0.26.0:
-    resolution: {integrity: sha512-j2YwAGYuD/XXoyzzUYn1N9NEGoAukkONMea2uLanMPWTqumkwme9eWgf2SjhRKNRb/60FDYStJYL582dbbt9Mw==}
-    engines: {node: '>=12'}
-    dev: false
-
   /log-symbols/5.1.0:
     resolution: {integrity: sha512-l0x2DvrW294C9uDCoQe1VSU4gf529FkSZ6leBl4TiqZH/e+0R7hSfHQBNut2mNygDgHwvYHfFLn6Oxb3VWj2rA==}
     engines: {node: '>=12'}
@@ -314,16 +260,6 @@ packages:
   /mri/1.2.0:
     resolution: {integrity: sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA==}
     engines: {node: '>=4'}
-    dev: false
-
-  /node-fetch/3.0.0-beta.9:
-    resolution: {integrity: sha512-RdbZCEynH2tH46+tj0ua9caUHVWrd/RHnRfvly2EVdqGmI3ndS1Vn/xjm5KuGejDt2RNDQsVRLPNd2QPwcewVg==}
-    engines: {node: ^10.17 || >=12.3}
-    dependencies:
-      data-uri-to-buffer: 3.0.1
-      fetch-blob: 2.1.2
-    transitivePeerDependencies:
-      - domexception
     dev: false
 
   /nth-check/2.0.1:
@@ -431,16 +367,8 @@ packages:
     resolution: {integrity: sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==}
     dev: false
 
-  /url-exist/3.0.0:
-    resolution: {integrity: sha512-hRO5udC8UhWKLh/weeTSMujDHmVBDS9KpLY7FGVilrLBKlHBwx6Gpe0fIkkYRkMaGuYHVqpdkNa0sO4wJfYEnA==}
-    engines: {node: '>=14.8'}
-    dependencies:
-      is-url-superb: 5.0.0
-      ky: 0.26.0
-      ky-universal: 0.9.1_ky@0.26.0
-    transitivePeerDependencies:
-      - domexception
-      - web-streams-polyfill
+  /url-exists-nodejs/0.2.3:
+    resolution: {integrity: sha512-5r95I7UgpnzXTQS3qTh/pVCbgsd+4xTjTSU0tGGVYnEKEda3sI1W91xUl22ge5SQlKi0VUeOw5v++f8xQ2J5yg==}
     dev: false
 
   /util-deprecate/1.0.2:

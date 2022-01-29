@@ -46,10 +46,11 @@ sade('und-check <dir>', true)
     // Next it performs rules from the html namespace
     const htmlFiles = glob.sync(path.join(dir, '**/*.html')) 
     
-    htmlFiles.forEach((file) => {
-      const fileResults = testFile(file, config)
+    for (let i = 0; i < htmlFiles.length; i++) {
+      const file = htmlFiles[i]
+      const fileResults = await testFile(file, config)
       files[file] = { errors: fileResults.errors, warnings: fileResults.warnings }
-    })
+    }
 
     // Output the errors and warnings
     spinner.stop()

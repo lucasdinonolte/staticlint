@@ -1,5 +1,5 @@
 import assert from 'assert'
-import urlExist from 'url-exist'
+import urlExists from 'url-exists-nodejs'
 
 const cleanString = (str) =>
   str
@@ -81,35 +81,6 @@ export const htmlRules = [{
         )
       })
     }
-  }, {
-    name: 'html.canonical',
-    description: 'Validates the presence of a canonical tag',
-    run: (payload, { test, config }) => {
-      const canonicals = payload.canonical
-
-      test(
-        assert.strictEqual,
-        canonicals.length,
-        1,
-        `There should be 1 canonical tag (<link rel="canonical"). Found ${canonicals.length}`,
-      )
-
-      if (canonicals.length !== 1) return
-
-      test(
-        assert.ok,
-        !!canonicals[0].href,
-        'Canonical tag should have a href attribute',
-      )
-
-      if (!!config.host) {
-        test(
-          assert.ok,
-          canonicals[0].href.includes(config.host),
-          `Canonical tag href should include the host: ${config.host}`,
-        )
-      }
-    },
   }, {
     name: 'html.meta.viewport',
     description: 'Checks for meta viewport tag',
@@ -225,15 +196,33 @@ export const htmlRules = [{
     run: async (payload, { test, config }) => {
       const external = payload.aTags.filter((l) => (l.href.includes('http') && !l.href.includes(config.host)))
 
-      external.forEach(async (l) => {
-        const hasUrl = await urlExist(l.href)
-
+      for (let i = 0; i < external.length; i++) {
+        const l = external[i]
+        const exists = await urlExists(l.href) 
         test(
           assert.ok,
-          hasUrl,
+          exists,
           `External URL ${l.href} does not seem to be online`,
         )
-      })
+      }
+    },
+  }, {
+    name: 'html.missingImages',
+    description: 'Checks for missing external images',
+    run: async (payload, { test, config }) => {
+      const external = payload.imgs.filter((i) => (i.src.includes('http') && !i.src.includes(config.host)))
+
+      for (let i = 0; i < external.length; i++) {
+        const l = external[i]
+
+        const exists = await urlExists(l.src) 
+        
+        test(
+          assert.ok,
+          exists,
+          `External image ${l.src} does not seem to be online`,
+        )
+      }
     },
   }, {
     name: 'html.maxOutboundLinks',
@@ -247,6 +236,19 @@ export const htmlRules = [{
         `This page contains a lot of outbound links (${external.length})`,
       )
     },
+  }, {
+    name: 'html.favicon',
+    description: 'Checks if favicon is set',
+    run: (payload, { test, config }) => {
+      const favicons = payload.linkTags.filter(l => l.rel === 'shortcut icon')
+
+      test(
+        assert.strictEqual,
+        favicons.length,
+        1,
+        `There should be 1 shortcut icon (favicon) link tag. Found ${favicons.length}`,
+      )
+    }
   }, {
     name: 'html.internalLinks',
     descriptions: 'Checks if internal links are well formated',
@@ -283,5 +285,18 @@ export const htmlRules = [{
         )
       })
     }
+  }, {
+    name: 'html.noVideo',
+    description: 'Warns if self hosted video is found',
+    run: (payload, { lint, config }) => {
+      const internal = payload.videos.filter((v) => (v.src.includes(config.host) || !v.src.includes('http')))
+
+      lint(
+        assert.strictEqual,
+        internal.length,
+        0,
+        `Self-hosting videos is probably not a good idea. Maybe consider using a service like vimeo.`,
+      )
+    },
   }
 ]

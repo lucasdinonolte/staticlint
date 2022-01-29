@@ -4,6 +4,7 @@ import fs from 'fs'
 import path from 'path'
 
 import { htmlRules } from './rules/html.js'
+import { seoRules } from './rules/seo.js'
 import { folderRules } from './rules/folder.js'
 import { defaultConfig } from './defaultConfig.js'
 
@@ -70,7 +71,7 @@ const testFolder = function(folder, config) {
   return { errors, warnings }
 }
 
-const testFile = function(file, config) {
+const testFile = async (file, config) => {
   const errors = {}
   const warnings = {}
 
@@ -90,22 +91,26 @@ const testFile = function(file, config) {
     h6s: $attributes($, 'h6'),
     canonical: $attributes($, '[rel="canonical"]'),
     imgs: $attributes($, 'img'),
+    videos: $attributes($, 'video'),
     aTags: $attributes($, 'a'),
     linkTags: $attributes($, 'link'),
     ps: $attributes($, 'p'),
   }
 
-  const runRule = (rule) => {
+  const runRule = async (rule) => {
     const name = rule.name
 
     const test = makeTestRunner(name, errors)
     const lint = makeTestRunner(name, warnings)
-    rule.run(results, { test, lint, config })
+    await rule.run(results, { test, lint, config })
   }
 
-  [htmlRules, config.customRules.html].flat().map((rule) => {
-    if (!config.ignoreRules.includes(rule.name)) runRule(rule)
-  })
+  const rulesToRun = [htmlRules, seoRules, config.customRules.html].flat()
+
+  for (let i = 0; i < rulesToRun.length; i++) {
+    const rule = rulesToRun[i]
+    if (!config.ignoreRules.includes(rule.name)) await runRule(rule)
+  }
 
   return { errors, warnings }
 }
