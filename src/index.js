@@ -51,7 +51,7 @@ const makeTestRunner = (name, severity) => {
   }
 }
 
-const testFolder = function(folder, ignoreRules = [], addRules = []) {
+const testFolder = function(folder, config) {
   const errors = {}
   const warnings = {}
 
@@ -60,17 +60,17 @@ const testFolder = function(folder, ignoreRules = [], addRules = []) {
 
     const test = makeTestRunner(name, errors)
     const lint = makeTestRunner(name, warnings)
-    rule.run(folder, { test, lint })
+    rule.run(folder, { test, lint, config })
   }
 
-  [folderRules, addRules].flat().map((rule) => {
-    if (!ignoreRules.includes(rule.name)) runRule(rule)
+  [folderRules, config.customRules.folder].flat().map((rule) => {
+    if (!config.ignoreRules.includes(rule.name)) runRule(rule)
   })
 
   return { errors, warnings }
 }
 
-const testFile = function(file, ignoreRules = [], addRules = []) {
+const testFile = function(file, config) {
   const errors = {}
   const warnings = {}
 
@@ -100,11 +100,11 @@ const testFile = function(file, ignoreRules = [], addRules = []) {
 
     const test = makeTestRunner(name, errors)
     const lint = makeTestRunner(name, warnings)
-    rule.run(results, { test, lint })
+    rule.run(results, { test, lint, config })
   }
 
-  [htmlRules, addRules].flat().map((rule) => {
-    if (!ignoreRules.includes(rule.name)) runRule(rule)
+  [htmlRules, config.customRules.html].flat().map((rule) => {
+    if (!config.ignoreRules.includes(rule.name)) runRule(rule)
   })
 
   return { errors, warnings }

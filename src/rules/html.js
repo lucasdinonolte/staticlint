@@ -27,7 +27,7 @@ export const htmlRules = [{
   }, {
     name: 'html.title',
     description: 'Checks if a title tag is present',
-    run: (payload, { test, lint }) => {
+    run: (payload, { test, lint, config }) => {
       const titles = payload.title
 
       // Test for presence of one and only one title tag
@@ -84,7 +84,7 @@ export const htmlRules = [{
   }, {
     name: 'html.canonical',
     description: 'Validates the presence of a canonical tag',
-    run: (payload, { test }) => {
+    run: (payload, { test, config }) => {
       const canonicals = payload.canonical
 
       test(
@@ -93,6 +93,22 @@ export const htmlRules = [{
         1,
         `There should be 1 canonical tag (<link rel="canonical"). Found ${canonicals.length}`,
       )
+
+      if (canonicals.length !== 1) return
+
+      test(
+        assert.ok,
+        !!canonicals[0].href,
+        'Canonical tag should have a href attribute',
+      )
+
+      if (!!config.host) {
+        test(
+          assert.ok,
+          canonicals[0].href.includes(config.host),
+          `Canonical tag href should include the host: ${config.host}`,
+        )
+      }
     },
   }, {
     name: 'html.meta.viewport',
@@ -206,8 +222,8 @@ export const htmlRules = [{
   }, {
     name: 'html.brokenLinks',
     description: 'Checks if all external links are working',
-    run: async (payload, { test }) => {
-      const external = payload.aTags.filter((l) => l.href.includes('http'))
+    run: async (payload, { test, config }) => {
+      const external = payload.aTags.filter((l) => (l.href.includes('http') && !l.href.includes(config.host)))
 
       external.forEach(async (l) => {
         const hasUrl = await urlExist(l.href)
@@ -219,5 +235,53 @@ export const htmlRules = [{
         )
       })
     },
+  }, {
+    name: 'html.maxOutboundLinks',
+    descriptions: 'Checks if there are a lot of outbound links on a page',
+    run: (payload, { lint, config }) => {
+      const external = payload.aTags.filter((l) => (l.href.includes('http') && !l.href.includes(config.host)))
+
+      lint(
+        assert.ok,
+        external.length < 50,
+        `This page contains a lot of outbound links (${external.length})`,
+      )
+    },
+  }, {
+    name: 'html.internalLinks',
+    descriptions: 'Checks if internal links are well formated',
+    run: (payload, { lint, test, config }) => {
+      const internal = payload.aTags.filter((l) => (l.href.includes(config.host) || !l.href.includes('http')))
+        .map((l) => {
+          if (l.href.includes('#')) l.href = l.href.split('#')[0]
+          return l
+        })
+        .filter((l) => !l.href.includes('mailto') && !l.href.includes('tel:') && l.href.length > 0)
+
+      if (internal.length === 0) return
+
+      internal.forEach((l) => {
+        // Internal Links should be lowercased
+        test(
+          assert.ok,
+          l.href === l.href.toLowerCase(),
+          `Links should be lowercase. [${l.innerText}](${l.href}) is not`,
+        )
+
+        // Internal Links should end with a trailing slash
+        lint(
+          assert.ok,
+          l.href.endsWith('/'),
+          `Internal links should include a trailing slash. [${l.innerText}](${l.href}) does not`,
+        )
+
+        // Internal links should not include a nofollow rel
+        test(
+          assert.ok,
+          !l.rel?.includes('nofollow'),
+          `Internal links should not include a nofollow rel. [${l.innerText}](${l.href}) does`,
+        )
+      })
+    }
   }
 ]

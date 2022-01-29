@@ -2,6 +2,7 @@
 
 import sade from 'sade'
 import chalk from 'chalk'
+import ora from 'ora'
 import glob from 'glob'
 import path from 'path'
 import fs from 'fs'
@@ -12,12 +13,15 @@ import { defaultConfig } from './defaultConfig.js'
 sade('und-check <dir>', true)
   .version('0.0.1')
   .describe('Checks the output of a SSG for common issues.')
-  .action(async (dir) => {
+  .option('--config', 'Path to custom config file', 'und-check.config.js')
+  .option('--host', 'Production URL. If set it overrides the host set in your config file', null)
+  .action(async (dir, opts) => {
     if (!fs.existsSync(dir)) {
       console.error(`Could not find directory to check: ${dir}`)
       process.exit(1)
     }
 
+    const spinner = ora('Checking everything').start()
     const errors = []
     const warnings = []
     const files = {}
@@ -26,28 +30,30 @@ sade('und-check <dir>', true)
     // if present load external config and merge with default config
     let config = defaultConfig
 
-    const configPath = path.join(process.cwd(), 'und-check.config.js')
+    const configPath = path.join(process.cwd(), opts.config)
     if (fs.existsSync(configPath)) {
       const externalConfig = await import(configPath)
       config = Object.assign(defaultConfig, externalConfig.default)
     }
 
-    const { ignoreRules } = config
+    // Flag overrides config
+    if (!!opts.host) config.host = opts.host
 
     // First it performs rules from the folder namespace
-    const folderResults = testFolder(dir, ignoreRules, config.customRules.folder) 
+    const folderResults = testFolder(dir, config) 
     files[dir] = { errors: folderResults.errors, warnings: folderResults.warnings }
     
     // Next it performs rules from the html namespace
     const htmlFiles = glob.sync(path.join(dir, '**/*.html')) 
     
     htmlFiles.forEach((file) => {
-      const fileResults = testFile(file, ignoreRules, config.customRules.html)
+      const fileResults = testFile(file, config)
       files[file] = { errors: fileResults.errors, warnings: fileResults.warnings }
     })
 
     // Output the errors and warnings
-    
+    spinner.stop()
+
     const outputMessages = (messages, styling) => {
       Object.keys(messages).forEach((key) => {
         messages[key].forEach(m => console.log(`${styling(key)} ${m}`))

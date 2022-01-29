@@ -4,7 +4,7 @@ CLI tool to check the output of a static site generator for common errors.
 
 ## Usage
 ```bash
-$ und-check ./dist
+$ und-check ./dist --host="https://example.com/"
 ```
 
 ## Goal
@@ -18,6 +18,10 @@ $ und-check ./dist
 ```js
 // und-check.config.js in your project root
 export default {
+  // Production URL
+  // Heads up, if script is run with --host flag this will be overridden
+  host: 'https://example.com/',
+
   // Specify rules to ignore
   ignoreRules: [],
 
