@@ -21,9 +21,7 @@ sade('und-check <dir>', true)
       process.exit(1)
     }
 
-    const spinner = ora('Checking everything').start()
-    const errors = []
-    const warnings = []
+    const spinner = ora('Starting check').start()
     const files = {}
 
     // Check for external config
@@ -52,6 +50,31 @@ sade('und-check <dir>', true)
       files[file] = { errors: fileResults.errors, warnings: fileResults.warnings }
     }
 
+    // Restructure the errors and warnings
+    const buildErrorMessages = (file, messages) => {
+      return Object.keys(messages).map((key) => {
+        return messages[key].map((m) => ({
+          file, 
+          rule: key,
+          message: m,
+        }))
+      }).flat()
+    }
+
+    const _tempErrors = []
+    const _tempWarnings = []
+
+    for (let i = 0; i < Object.keys(files).length; i++) {
+      const key = Object.keys(files)[i]
+      const file = files[key]
+
+      _tempErrors.push(buildErrorMessages(key, file.errors))
+      _tempWarnings.push(buildErrorMessages(key, file.warnings))
+    }
+
+    const errors = _tempErrors.flat()
+    const warnings = _tempWarnings.flat()
+
     // Output the errors and warnings
     spinner.stop()
 
@@ -71,8 +94,14 @@ sade('und-check <dir>', true)
       console.log('')
     }
 
-    // TODO: Output number of errors and warnings
-    // Exit accordingly
-    if (errors.length > 0) process.exit(1) 
+    // Output number of errors and warnings
+    if (errors.length > 0 || warnings.length > 0) {
+      console.log(chalk.bgRed(`${errors.length} errors`), chalk.bgYellow(`${warnings.length} warnings`))
+
+      // If errors are present exit with a non-sucess status code
+      if (errors.length > 0) process.exit(1) 
+    } else {
+      console.log(chalk.bgGreen('Looks good to me 🍻'))
+    }
   })
   .parse(process.argv)
