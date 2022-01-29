@@ -4,6 +4,13 @@
   "description": "A testing suite for statically generated websites",
   "main": "src/index.js",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com:und-Pohlen/und-check.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "scripts": {
     "cli": "node src/bin.js",
     "test": "echo \"Error: no test specified\" && exit 1"
