@@ -2,6 +2,11 @@
 
 CLI tool to check the output of a static site generator for common errors.
 
+## Usage
+```bash
+$ und-check ./dist
+```
+
 ## Goal
 - A simple to use CLI to check for common errors.
 - Should return suitable exit codes, so it could stop the build, when run in CI
@@ -10,7 +15,7 @@ CLI tool to check the output of a static site generator for common errors.
 - Should allow users to inject their own tests via the config file
 
 ## Configuration File
-```
+```js
 // und-check.config.js in your project root
 export default {
   // Specify rules to ignore
