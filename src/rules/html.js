@@ -1,7 +1,30 @@
 import assert from 'assert'
+import urlExist from 'url-exist'
 
-export const htmlRules = [
-  {
+const cleanString = (str) =>
+  str
+    .toLowerCase()
+    .replace('|', '')
+    .replace('-', '')
+    .replace('.', '')
+    .replace(':', '')
+    .replace('!', '')
+    .replace('?', '')
+
+export const htmlRules = [{
+    name: 'html.lang',
+    description: 'Validates the presence of a lang attribute on the html tag',
+    run: (payload, { test }) => {
+      const html = payload.html
+      if (html.length !== 1) return
+
+      test(
+        assert.ok,
+        !!html[0].lang,
+        'Lang attribute should be present on HTML tag',
+      )
+    }
+  }, {
     name: 'html.title',
     description: 'Checks if a title tag is present',
     run: (payload, { test, lint }) => {
@@ -59,6 +82,52 @@ export const htmlRules = [
       })
     }
   }, {
+    name: 'html.canonical',
+    description: 'Validates the presence of a canonical tag',
+    run: (payload, { test }) => {
+      const canonicals = payload.canonical
+
+      test(
+        assert.strictEqual,
+        canonicals.length,
+        1,
+        `There should be 1 canonical tag (<link rel="canonical"). Found ${canonicals.length}`,
+      )
+    },
+  }, {
+    name: 'html.meta.viewport',
+    description: 'Checks for meta viewport tag',
+    run: (payload, { test }) => {
+      const viewport = payload.meta.find((m) => m.name === 'viewport')
+      
+      test(
+        assert.notStrictEqual,
+        viewport,
+        undefined,
+        'There should be a meta viewport tag on the page',
+      )
+
+      if (!viewport) return
+
+      test(
+        assert.ok,
+        !!viewport.content,
+        'Meta Viewport should have a content attribute',
+      )
+
+      test(
+        assert.ok,
+        viewport.content.includes('width=device-width'),
+        `Meta viewport content should include width=device-width`,
+      )
+
+      test(
+        assert.ok,
+        viewport.content.includes('initial-scale=1'),
+        `Meta viewport content should include initial-scale=1`,
+      )
+    },
+  }, {
     name: 'html.meta.description',
     description: 'Validates presence of meta description',
     run: (payload, { test, lint }) => {
@@ -103,6 +172,24 @@ export const htmlRules = [
         metas[0].content.length < 300,
         `Investigate this meta description. Something could be wrong as it is over 300 chars: ${metas[0].content}`,
       )
+
+      if (payload.title[0]) {
+        const titleArr = cleanString(payload.title[0].innerText)
+          .split(' ')
+          .filter((i) => [':', '|', '-'].indexOf(i) === -1)
+
+        const compareArr = cleanString(metas[0].content)
+          .split(' ')
+          .filter((i) => [':', '|', '-'].indexOf(i) === -1)
+
+        const matches = titleArr.filter((t) => compareArr.indexOf(t) !== -1);
+
+        lint(
+          assert.ok,
+          matches.length >= 1,
+          'Meta description should include at least 1 of the words in the title tag.',
+        )
+      }
     }
   }, {
     name: 'html.img.alt',
@@ -113,6 +200,22 @@ export const htmlRules = [
           assert.ok,
           i.alt && i.alt.length > 0,
           `Images should have alt tags. ${i.src} does not`,
+        )
+      })
+    },
+  }, {
+    name: 'html.brokenLinks',
+    description: 'Checks if all external links are working',
+    run: async (payload, { test }) => {
+      const external = payload.aTags.filter((l) => l.href.includes('http'))
+
+      external.forEach(async (l) => {
+        const hasUrl = await urlExist(l.href)
+
+        test(
+          assert.ok,
+          hasUrl,
+          `External URL ${l.href} does not seem to be online`,
         )
       })
     },
