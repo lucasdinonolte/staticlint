@@ -11,7 +11,7 @@ import { testFolder, testFile } from './index.js'
 import { defaultConfig } from './defaultConfig.js'
 
 sade('und-check <dir>', true)
-  .version('0.0.1')
+  .version('0.1.0')
   .describe('Checks the output of a SSG for common issues.')
   .option('--config', 'Path to custom config file', 'und-check.config.js')
   .option('--host', 'Production URL. If set it overrides the host set in your config file', null)
