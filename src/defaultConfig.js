@@ -5,5 +5,5 @@ export const defaultConfig = {
     folder: [],
     html: [],
   },
-  display: ['errors', 'warnings'],
+  display: ['error', 'warning'],
 }
