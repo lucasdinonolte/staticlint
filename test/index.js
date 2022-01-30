@@ -1,22 +1,5 @@
-import { testFile, testFolder } from '../src/index.js'
-import assert from 'assert'
+import check from '../src/index.js'
 
-console.log(testFolder('./fixtures/public', ['robots']))
-console.log(testFile('./fixtures/01-sample.html', ['img.alt'], [{
-  name: 'custom.rule',
-  run: (payload, { test, lint }) => {
-    test(
-      assert.strictEqual,
-      1,
-      2,
-      'Custom Rule Error',
-    )
+const { errors, warnings } = await check('./fixtures/public', {})
 
-    lint(
-      assert.strictEqual,
-      1,
-      2,
-      'Custom Rule Warning',
-    )
-  }
-}]))
+console.log('Errors', errors.length, '\t\tWarnings', warnings.length)

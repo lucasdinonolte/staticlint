@@ -27,7 +27,8 @@ export default async function(dir, _config = {}) {
   
   for (let i = 0; i < htmlFiles.length; i++) {
     const file = htmlFiles[i]
-    const fileResults = await testFile(file, config)
+    const html = fs.readFileSync(path.resolve(file), 'utf-8')
+    const fileResults = await testFile(html, config)
     files[file] = { errors: fileResults.errors, warnings: fileResults.warnings }
   }
   

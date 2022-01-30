@@ -3,9 +3,6 @@ import cheerio from 'cheerio'
 import fs from 'fs'
 import path from 'path'
 
-import { htmlRules } from './rules/html.js'
-import { seoRules } from './rules/seo.js'
-import { folderRules } from './rules/folder.js'
 import { defaultConfig } from './defaultConfig.js'
 
 /**
@@ -67,20 +64,32 @@ const testFolder = function(folder, config) {
     rule.run(folder, { test, lint, config })
   }
 
-  [folderRules, config.customRules.folder].flat().map((rule) => {
+  [config.rules.folder, config.customRules.folder].flat().map((rule) => {
     if (!config.ignoreRules.includes(rule.name)) runRule(rule)
   })
 
   return { errors, warnings }
 }
 
-const testFile = async (file, config) => {
+/**
+ * This only takes an HTML string and does not read from the file itself
+ * to be more encapsulated and easier to test.
+ *
+ * @param HTML string to test
+ * @param und-check configuration object
+ */
+const testFile = async (html, config) => {
   const errors = {}
   const warnings = {}
 
-  const html = fs.readFileSync(path.resolve(file), 'utf-8')
   const $ = cheerio.load(html)
 
+  // TODO: Refactor: Expose a helper function to tests instead of prebuilding
+  // the payload. This makes future tests more flexible and less dependend on
+  // the cache that is built here.  
+  //
+  // Helper function could still keep in-memory cache of already looked up
+  // elements per file.
   const results = {
     html: $attributes($, 'html'),
     title: $attributes($, 'title'),
@@ -100,6 +109,7 @@ const testFile = async (file, config) => {
     ps: $attributes($, 'p'),
   }
 
+  // Refactor: This could be a global factory function that accepts a callback
   const runRule = async (rule) => {
     const name = rule.name
 
@@ -108,7 +118,7 @@ const testFile = async (file, config) => {
     await rule.run(results, { test, lint, config })
   }
 
-  const rulesToRun = [htmlRules, seoRules, config.customRules.html].flat()
+  const rulesToRun = [config.rules.html, config.customRules.html].flat()
 
   for (let i = 0; i < rulesToRun.length; i++) {
     const rule = rulesToRun[i]
