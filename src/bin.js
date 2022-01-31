@@ -9,9 +9,16 @@ import fs from 'fs'
 import groupBy from 'lodash.groupby'
 
 import performTests from './index.js'
+import { defaultConfig } from './defaultConfig.js'
+import { mergeConfigurations } from './configuration.js'
 
-sade('und-check <dir>', true)
+// IDEA: Add more commands
+// - generate config file
+const prog = sade('und-check')
   .version('0.1.0')
+
+prog
+  .command('check <dir>', '', { default: true })
   .describe('Checks the output of a SSG for common issues.')
   .option('--config', 'Path to custom config file', 'und-check.config.js')
   .option('--host', 'Production URL. If set it overrides the host set in your config file', null)
@@ -66,4 +73,16 @@ sade('und-check <dir>', true)
       console.log(stylings.success('Looks good to me 🍻'))
     }
   })
-  .parse(process.argv)
+
+prog
+  .command('rules', '')
+  .describe('List the rules, that will be applied in the current configuration')
+  .option('--config', 'Path to custom config file', 'und-check.config.js')
+  .action(async (opts) => {
+    const config = await mergeConfigurations(opts.config)
+    const rules = Object.values(config.rules).flat().map(r => r.name)
+    console.log('The current configuration will run und-check with the following rules\n')
+    console.log(rules.join('\n'))
+  })
+
+prog.parse(process.argv)

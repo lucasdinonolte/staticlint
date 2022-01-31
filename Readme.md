@@ -15,12 +15,15 @@ $ yarn add @und-pohlen/und-check@0.1.0
 
 ### 2. Add a script to `package.json`
 ```json
-"test": "und-check BUILD_FOLDER --config=./und-check.config.mjs",
+"test": "und-check BUILD_FOLDER --config=./und-check.config.js",
 ```
 Replace `BUILD_FOLDER` with the path to your final build directory.
 
-### 3. Add coinfig
+### 3. Add config
 Add `und-check.config.js` to your project root. (See below for details about the config.)
+
+`und-check.config.js` is expected to be an ES module (`export` syntax). So
+depending on your project, you might need to use the `.mjs` file extension.
 
 ## Usage
 ```bash
