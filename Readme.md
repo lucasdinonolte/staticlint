@@ -30,6 +30,16 @@ depending on your project, you might need to use the `.mjs` file extension.
 $ und-check ./dist --host="https://example.com/"
 ```
 
+## Programmatic Usage
+You can also use und-check from within your own script like so.
+
+```js
+import check from './index.js'
+
+// See below for config example
+const { errors, warnings } = await check('./BUILD_FOLDER', config)
+```
+
 ## Goal
 - A simple to use CLI to check for common errors.
 - Should return suitable exit codes, so it could stop the build, when run in CI
