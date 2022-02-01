@@ -6,6 +6,20 @@ import { testFolder, testFile } from './tester.js'
 import { defaultConfig } from './defaultConfig.js'
 import { ERRORS, WARNINGS } from './constants.js'
 
+const Cache = {
+  entries: {},
+
+  push: function(name, value) {
+    if (!this.entries.hasOwnProperty(name)) this.entries[name] = []
+    this.entries[name].push(value)
+  },
+
+  includes: function(name, value) {
+    if (!this.entries.hasOwnProperty(name)) return false
+    return this.entries[name].includes(value)
+  },
+}
+
 /**
  * Checks a directory
  * Returns an object with errors and warnings.
@@ -29,7 +43,7 @@ export default async function(dir, _config = {}) {
   for (let i = 0; i < htmlFiles.length; i++) {
     const file = htmlFiles[i]
     const html = fs.readFileSync(path.resolve(file), 'utf-8')
-    const fileResults = await testFile(html, config)
+    const fileResults = await testFile(html, { config, cache: Cache })
     files[file] = { errors: fileResults.errors, warnings: fileResults.warnings }
   }
   

@@ -79,7 +79,7 @@ const testFolder = function(folder, config) {
  * @param HTML string to test
  * @param und-check configuration object
  */
-const testFile = async (html, config) => {
+const testFile = async (html, { config, cache }) => {
   const errors = {}
   const warnings = {}
 
@@ -116,7 +116,7 @@ const testFile = async (html, config) => {
 
     const test = makeTestRunner(name, errors)
     const lint = makeTestRunner(name, warnings)
-    await rule.run(results, { test, lint, config })
+    await rule.run(results, { test, lint, config, cache })
   }
 
   const rulesToRun = [config.rules.html, config.customRules.html].flat()
