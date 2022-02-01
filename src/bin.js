@@ -11,6 +11,14 @@ import groupBy from 'lodash.groupby'
 import performTests from './index.js'
 import { defaultConfig } from './defaultConfig.js'
 import { mergeConfigurations } from './configuration.js'
+import { ERRORS, WARNINGS } from './constants.js'
+
+const stylings = {
+  error: chalk.bgRed,
+  warning: chalk.bgYellow,
+  info: chalk.bgGrey,
+  success: chalk.bgGreen,
+}
 
 // IDEA: Add more commands
 // - generate config file
@@ -25,22 +33,8 @@ prog
   .action(async (dir, opts) => {
     const spinner = ora('Starting check').start()
 
-    const stylings = {
-      error: chalk.bgRed,
-      warning: chalk.bgYellow,
-      info: chalk.bgGrey,
-      success: chalk.bgGreen,
-    }
-
-    // Check for external config
-    // if present load external config and merge with default config
-    let config = {}
-
-    const configPath = path.join(process.cwd(), opts.config)
-    if (fs.existsSync(configPath)) {
-      const externalConfig = await import(configPath)
-      config = Object.assign({}, externalConfig.default)
-    }
+    // Load external config and merge with default config
+    const config = await mergeConfigurations(opts.config)
 
     // Flag overrides config
     if (!!opts.host) config.host = opts.host
@@ -83,6 +77,34 @@ prog
     const rules = Object.values(config.rules).flat().map(r => r.name)
     console.log('The current configuration will run und-check with the following rules\n')
     console.log(rules.join('\n'))
+  })
+
+prog
+  .command('scaffold', '')
+  .describe('Builds an empty config file')
+  .action(() => {
+    const template = `export default {
+  // Production URL
+  // Heads up: If you run the CLI with --host flag it will override this
+  host: 'https://example.com/', 
+
+  // Rules to ignore
+  ignoreRules: [], 
+
+  // Create custom rules
+  customRules: {
+    folder: [],
+    html: [],
+  },
+
+  // Output both errors and warnings
+  display: ['${ERRORS}', '${WARNINGS}'],
+}`
+
+    const outputPath = path.join(process.cwd(), 'und-check.config.js')
+    fs.writeFileSync(outputPath, template, { encoding: 'utf-8' })
+
+    console.log(`Written config to ${outputPath}`)
   })
 
 prog.parse(process.argv)

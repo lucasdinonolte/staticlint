@@ -56,6 +56,7 @@ const testFolder = function(folder, config) {
   const errors = {}
   const warnings = {}
 
+
   const runRule = (rule) => {
     const name = rule.name
 

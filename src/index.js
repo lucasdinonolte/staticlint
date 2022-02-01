@@ -4,6 +4,7 @@ import glob from 'glob'
 
 import { testFolder, testFile } from './tester.js'
 import { defaultConfig } from './defaultConfig.js'
+import { ERRORS, WARNINGS } from './constants.js'
 
 /**
  * Checks a directory
@@ -51,8 +52,8 @@ export default async function(dir, _config = {}) {
     const key = Object.keys(files)[i]
     const file = files[key]
 
-    if (config.display.includes('error')) _tempErrors.push(buildErrorMessages(key, file.errors))
-    if (config.display.includes('warning')) _tempWarnings.push(buildErrorMessages(key, file.warnings, 'warning'))
+    if (config.display.includes(ERRORS)) _tempErrors.push(buildErrorMessages(key, file.errors))
+    if (config.display.includes(WARNINGS)) _tempWarnings.push(buildErrorMessages(key, file.warnings, 'warning'))
   }
 
   const errors = _tempErrors.flat()

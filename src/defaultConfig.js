@@ -1,6 +1,7 @@
 import { htmlRules } from './rules/html.js'
 import { seoRules } from './rules/seo.js'
 import { folderRules } from './rules/folder.js'
+import { ERRORS, WARNINGS } from './constants.js'
 
 export const defaultConfig = {
   host: null,
@@ -13,5 +14,5 @@ export const defaultConfig = {
     folder: folderRules,
     html: [htmlRules, seoRules].flat(),
   },
-  display: ['error', 'warning'],
+  display: [ERRORS, WARNINGS],
 }
