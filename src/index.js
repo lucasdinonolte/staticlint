@@ -10,12 +10,12 @@ const Cache = {
   entries: {},
 
   push: function(name, value) {
-    if (!this.entries.hasOwnProperty(name)) this.entries[name] = []
+    if (!Object.prototype.hasOwnProperty.call(this.entries, name)) this.entries[name] = []
     this.entries[name].push(value)
   },
 
   includes: function(name, value) {
-    if (!this.entries.hasOwnProperty(name)) return false
+    if (!Object.prototype.hasOwnProperty.call(this.entries, name)) return false
     return this.entries[name].includes(value)
   },
 }

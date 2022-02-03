@@ -2,14 +2,12 @@
 
 import sade from 'sade'
 import chalk from 'chalk'
-import glob from 'glob'
 import path from 'path'
 import fs from 'fs'
 import groupBy from 'lodash.groupby'
 import { performance } from 'perf_hooks'
 
 import performTests from './index.js'
-import { defaultConfig } from './defaultConfig.js'
 import { mergeConfigurations } from './configuration.js'
 import { ERRORS, WARNINGS } from './constants.js'
 
@@ -43,7 +41,7 @@ prog
     const config = await mergeConfigurations(opts.config)
 
     // Flag overrides config
-    if (!!opts.host) config.host = opts.host
+    if (opts.host) config.host = opts.host
 
     // Run the tests
     const { errors, warnings } = await performTests(dir, config)

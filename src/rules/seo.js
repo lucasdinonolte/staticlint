@@ -21,7 +21,7 @@ export const seoRules = [{
       'Canonical tag should have a href attribute',
     )
 
-    if (!!config.host) {
+    if (config.host) {
       test(
         assert.ok,
         canonicals[0].href.includes(config.host),
@@ -50,7 +50,7 @@ export const seoRules = [{
   name: 'seo.headings',
   description: 'Validates the proper use of headline tags',
   run: (payload, { test, lint }) => {
-    const { h1s, h2s, h3s, h4s, h5s, h6s, title } = payload
+    const { h1s, h2s, h3s, h4s, h5s, h6s} = payload
 
     // There should be only one H1 tag
     // TODO: Research if this still is true from an SEO-standpoint
@@ -58,7 +58,7 @@ export const seoRules = [{
       assert.strictEqual,
       h1s.length,
       1,
-      `There should be 1 H1 tag. Found ${h1s.length}.`
+      `There should be 1 H1 tag. Found ${h1s.length}.`,
     )
 
     // Lint heading levels

@@ -11,7 +11,7 @@ export const folderRules = [{
       fs.existsSync(path.join(folder, 'sitemap.xml')),
       'No sitemap.xml found',
     )
-  }
+  },
 }, {
   name: 'folder.htaccess',
   description: 'Checks if .htaccess is present',
@@ -32,5 +32,5 @@ export const folderRules = [{
       true,
       'No robots.txt found',
     )
-  }
+  },
 }]

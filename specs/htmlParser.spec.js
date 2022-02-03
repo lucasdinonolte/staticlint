@@ -11,6 +11,5 @@ describe('HTML Parser', () => {
     const { $attributes } = parseHtml('<p>Hallo</p><p>Hello</p><div>Yes!</div>')
     expect($attributes('div').length).toBe(1)
     expect($attributes('p').length).toBe(2)
-    expect($attributes('div').length).toBe(10)
   })
 })

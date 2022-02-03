@@ -1,7 +1,3 @@
-import fs from 'fs'
-import path from 'path'
-
-import { defaultConfig } from './defaultConfig.js'
 import { parseHtml } from './util/html.js'
 
 /**
@@ -16,7 +12,7 @@ const makeTestRunner = (name, severity) => {
     try {
       testFunction(...params)
     } catch(e) {
-      if (!severity.hasOwnProperty(name)) severity[name] = []
+      if (!Object.prototype.hasOwnProperty.call(severity, name)) severity[name] = []
       severity[name].push(e.message)
     }
   }
