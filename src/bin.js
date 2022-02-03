@@ -2,11 +2,11 @@
 
 import sade from 'sade'
 import chalk from 'chalk'
-import ora from 'ora'
 import glob from 'glob'
 import path from 'path'
 import fs from 'fs'
 import groupBy from 'lodash.groupby'
+import { performance } from 'perf_hooks'
 
 import performTests from './index.js'
 import { defaultConfig } from './defaultConfig.js'
@@ -14,10 +14,16 @@ import { mergeConfigurations } from './configuration.js'
 import { ERRORS, WARNINGS } from './constants.js'
 
 const stylings = {
-  error: chalk.bgRed,
-  warning: chalk.bgYellow,
+  error: chalk.red,
+  warning: chalk.yellow,
   info: chalk.bgGrey,
   success: chalk.bgGreen,
+  secondary: chalk.grey,
+}
+
+const icons = {
+  error: '×',
+  warning: '!', 
 }
 
 // IDEA: Add more commands
@@ -31,7 +37,7 @@ prog
   .option('--config', 'Path to custom config file', 'und-check.config.js')
   .option('--host', 'Production URL. If set it overrides the host set in your config file', null)
   .action(async (dir, opts) => {
-    const spinner = ora('Starting check').start()
+    const start = performance.now()
 
     // Load external config and merge with default config
     const config = await mergeConfigurations(opts.config)
@@ -43,28 +49,31 @@ prog
     const { errors, warnings } = await performTests(dir, config)
 
     // Output the errors and warnings
-    spinner.stop()
     const output = groupBy([errors, warnings].flat(), 'file')
     const outputMessages = function(messages) {
       messages.forEach(m => {
-        console.log(`${stylings[m.severity](m.rule)} ${m.message}`)
+        console.log(`  ${stylings[m.severity](icons[m.severity])} ${stylings.secondary(m.rule)} ${m.message}`)
       })
     }
 
     for (const [fileName, messages] of Object.entries(output)) {
-      console.log(`${stylings.info(fileName)}`)
+      const fName = fileName.replace(dir, '')
+      console.log(`${chalk.grey(dir)}${chalk.white.bold(fName)}`)
       outputMessages(messages)
-      console.log('\n')
+      console.log('')
     }
 
-    // Output number of errors and warnings
-    if (errors.length > 0 || warnings.length > 0) {
-      console.log(chalk.bgRed(`${errors.length} errors`), chalk.bgYellow(`${warnings.length} warnings`))
+    const end = performance.now() 
+    console.log(chalk.bold('Rules'), '      ', chalk.white(config.rules.html.length + config.rules.folder.length))
+    console.log(chalk.bold('Time'), '       ', chalk.white(Math.round((end - start)) / 1000 + 's'))
 
-      // If errors are present exit with a non-sucess status code
-      if (errors.length > 0) process.exit(1) 
-    } else {
-      console.log(stylings.success('Looks good to me 🍻'))
+    // Output number of errors and warnings
+    console.log(chalk.bold('Errors'), '     ', chalk.red.bold(errors.length))
+    console.log(chalk.bold('Warnings'), '   ', chalk.yellow.bold(warnings.length))
+
+    if (errors.length > 0) {
+      console.log(chalk.bold.red('\nCheck failed. See above for details'))
+      process.exit(1) 
     }
   })
 
