@@ -13,7 +13,7 @@
   },
   "scripts": {
     "cli": "node src/bin.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest specs/ --verbose"
   },
   "bin": {
     "und-check": "src/bin.js"
@@ -28,5 +28,8 @@
     "ora": "^6.0.1",
     "sade": "^1.8.1",
     "url-exists-nodejs": "^0.2.3"
+  },
+  "devDependencies": {
+    "jest": "^27.4.7"
   }
 }

@@ -5,9 +5,9 @@ import { defaultConfig } from './defaultConfig.js'
 
 const _loadExternalConfiguration = async (externalConfig) => {
   let config = {}
-  const configPath = path.join(process.cwd(), externalConfig)
+  const configPath = !!externalConfig && path.join(process.cwd(), externalConfig)
 
-  if (fs.existsSync(configPath)) {
+  if (!!configPath && fs.existsSync(configPath)) {
     const externalConfig = await import(configPath)
     config = Object.assign({}, externalConfig.default) 
   }
