@@ -14,8 +14,7 @@ describe('Configuration', () => {
         folder: [],
         html: [],
       },
-      rules: {
-      },
+      rules: [],
       display: [],
       failOn: [],
     })

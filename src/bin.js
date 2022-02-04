@@ -62,7 +62,7 @@ prog
     }
 
     const end = performance.now() 
-    console.log(chalk.bold('Rules'), '      ', chalk.white(config.rules.html.length + config.rules.folder.length))
+    console.log(chalk.bold('Rules'), '      ', chalk.white(config.rules.length + config.customRules.length))
     console.log(chalk.bold('Time'), '       ', chalk.white(Math.round((end - start)) / 1000 + 's'))
 
     // Output number of errors and warnings

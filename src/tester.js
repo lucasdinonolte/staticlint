@@ -18,7 +18,7 @@ const makeTestRunner = (name, severity) => {
   }
 }
 
-const testFolder = function(folder, config) {
+const testFolder = function(folder, rules, { config }) {
   const errors = {}
   const warnings = {}
 
@@ -28,10 +28,10 @@ const testFolder = function(folder, config) {
 
     const test = makeTestRunner(name, errors)
     const lint = makeTestRunner(name, warnings)
-    rule.run(folder, { test, lint, config })
+    rule.folder(folder, { test, lint, config })
   }
 
-  [config.rules.folder, config.customRules.folder].flat().map((rule) => {
+  rules.map((rule) => {
     if (!config.ignoreRules.includes(rule.name)) runRule(rule)
   })
 
@@ -45,7 +45,7 @@ const testFolder = function(folder, config) {
  * @param HTML string to test
  * @param und-check configuration object
  */
-const testFile = async (html, { config, cache }) => {
+const testHtmlFile = async (html, rules, { config, cache }) => {
   const errors = {}
   const warnings = {}
 
@@ -57,10 +57,10 @@ const testFile = async (html, { config, cache }) => {
 
     const test = makeTestRunner(name, errors)
     const lint = makeTestRunner(name, warnings)
-    await rule.run(results, { test, lint, config, cache, $attributes })
+    await rule.html(results, { test, lint, config, cache, $attributes })
   }
 
-  const rulesToRun = [config.rules.html, config.customRules.html].flat()
+  const rulesToRun = rules
 
   for (let i = 0; i < rulesToRun.length; i++) {
     const rule = rulesToRun[i]
@@ -70,4 +70,28 @@ const testFile = async (html, { config, cache }) => {
   return { errors, warnings }
 }
 
-export { makeTestRunner, testFile, testFolder }
+/**
+ * Generic test runner for files
+ *
+ * @param path to file
+ * @param und-check configuration object
+ */
+const testFile = async (file, rules, { config }) => {
+  const errors = {}
+  const warnings = {}
+
+  const runRule = async(rule) => {
+    const name = rule.name
+
+    const test = makeTestRunner(name, errors)
+    const lint = makeTestRunner(name, warnings)
+
+    await rule.file(file, { test, lint, config })
+  }
+
+  rules.map((rule) => {
+    if (!config.ignoreRules.includes(rule.name)) runRule(rule)
+  })
+}
+
+export { makeTestRunner, testHtmlFile, testFile, testFolder }

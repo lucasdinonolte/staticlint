@@ -3,7 +3,7 @@ import assert from 'assert'
 export const seoRules = [{
   name: 'seo.canonical',
   description: 'Validates the presence of a canonical tag',
-  run: (payload, { test, config }) => {
+  html: (payload, { test, config }) => {
     const canonicals = payload.canonical
 
     test(
@@ -32,7 +32,7 @@ export const seoRules = [{
 }, {
   name: 'seo.uniqueTitle',
   description: 'Validates that every title is only used once',
-  run: (payload, { test, cache }) => {
+  html: (payload, { test, cache }) => {
     const titles = payload.title
     if (titles.length !== 1) return
   
@@ -49,7 +49,7 @@ export const seoRules = [{
 }, {
   name: 'seo.headings',
   description: 'Validates the proper use of headline tags',
-  run: (payload, { test, lint }) => {
+  html: (payload, { test, lint }) => {
     const { h1s, h2s, h3s, h4s, h5s, h6s} = payload
 
     // There should be only one H1 tag
@@ -79,7 +79,7 @@ export const seoRules = [{
 
         lint(
           assert.ok,
-          heading.innerText.length > minLength,
+          heading.innerText.length >= minLength,
           `${name} tag is shorter than the recommended limit of ${minLength}. (${heading.innerText})`,
         )
       })

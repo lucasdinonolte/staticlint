@@ -1,8 +1,9 @@
 import fs from 'fs'
 import path from 'path'
 import glob from 'glob'
+import groupBy from 'lodash.groupby'
 
-import { testFolder, testFile } from './tester.js'
+import { testFolder, testHtmlFile, testFile } from './tester.js'
 import { defaultConfig } from './defaultConfig.js'
 import { ERRORS, WARNINGS } from './constants.js'
 
@@ -33,8 +34,26 @@ export default async function(dir, _config = {}) {
   const files = {}
   const config = Object.assign(defaultConfig, _config)
 
+  // Figure out the rules
+  const folderRules = [
+    config.rules.filter(r => (typeof r.folder === 'function')),
+    config.customRules.filter(r => (typeof r.folder === 'function')),
+  ].flat()
+
+  const fileRules = [
+    config.rules.filter(r => (typeof r.file === 'function')),
+    config.customRules.filter(r => (typeof r.file === 'function')),
+  ].flat()
+
+  const fileRulesByGlob = groupBy(fileRules, 'files')
+
+  const htmlRules = [
+    config.rules.filter(r => (typeof r.html === 'function')),
+    config.customRules.filter(r => (typeof r.html === 'function')),
+  ].flat()
+
   // First it performs rules from the folder namespace
-  const folderResults = testFolder(dir, config) 
+  const folderResults = testFolder(dir, folderRules, { config }) 
   files[dir] = { errors: folderResults.errors, warnings: folderResults.warnings }
   
   // Next it performs rules from the html namespace
@@ -43,8 +62,17 @@ export default async function(dir, _config = {}) {
   for (let i = 0; i < htmlFiles.length; i++) {
     const file = htmlFiles[i]
     const html = fs.readFileSync(path.resolve(file), 'utf-8')
-    const fileResults = await testFile(html, { config, cache: Cache })
+    const fileResults = await testHtmlFile(html, htmlRules, { config, cache: Cache })
     files[file] = { errors: fileResults.errors, warnings: fileResults.warnings }
+  }
+
+  // Next it performs generic file rules
+  for (const [fileGlob, rules] of Object.entries(fileRulesByGlob)) {
+    const files = glob.sync(path.join(dir, fileGlob))
+    await files.forEach(async (file) => {
+      const results = await testFile(file, rules, { config })
+      files[file] = { errors: results.errors, warnings: results.warnings }
+    })
   }
   
   // Restructure the errors and warnings
