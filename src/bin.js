@@ -9,7 +9,7 @@ import { performance } from 'perf_hooks'
 
 import performTests from './index.js'
 import { mergeConfigurations } from './configuration.js'
-import { ERRORS, WARNINGS } from './constants.js'
+import { ERRORS, WARNINGS, ICONS } from './constants.js'
 
 const stylings = {
   errors: chalk.red,
@@ -17,11 +17,6 @@ const stylings = {
   info: chalk.bgGrey,
   success: chalk.bgGreen,
   secondary: chalk.grey,
-}
-
-const icons = {
-  errors: '×',
-  warnings: '!', 
 }
 
 // IDEA: Add more commands
@@ -50,7 +45,7 @@ prog
     const output = groupBy([errors, warnings].flat(), 'file')
     const outputMessages = function(messages) {
       messages.forEach(m => {
-        if (config.display.includes(m.severity)) console.log(`  ${stylings[m.severity](icons[m.severity])} ${stylings.secondary(m.rule)} ${m.message}`)
+        if (config.display.includes(m.severity)) console.log(`  ${stylings[m.severity](ICONS[m.severity])} ${stylings.secondary(m.rule)} ${m.message}`)
       })
     }
 
@@ -99,10 +94,7 @@ prog
   ignoreRules: [], 
 
   // Create custom rules
-  customRules: {
-    folder: [],
-    html: [],
-  },
+  customRules: [], 
 
   // Output both errors and warnings
   display: ['${ERRORS}', '${WARNINGS}'],

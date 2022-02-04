@@ -9,33 +9,38 @@ import cheerio from 'cheerio'
  * @param instance of cheerio
  * @param queryselector to search for
  */
-const getAttributes = $ => (search) => {
-  const arr = []
-  $(search).each(function () {
-    const namespace = $(this)[0].namespace
-    if (!namespace || namespace.includes('html')) {
-      const out = {
-        tag: $(this)[0].name,
-        innerHTML: $(this).html(),
-        innerText: $(this).text(),
-      }
+const getAttributes = (html) => {
+  const $ = cheerio.load(html)
 
-      if ($(this)[0].attribs) {
-        Object.entries($(this)[0].attribs).forEach((attr) => {
-          out[attr[0].toLowerCase()] = attr[1]
-        })
-      }
+  return (search) => {
+    const arr = []
 
-      arr.push(out)
-    }
-  })
-  return arr
+    $(search).each(function () {
+      const namespace = $(this)[0].namespace
+      if (!namespace || namespace.includes('html')) {
+        const out = {
+          tag: $(this)[0].name,
+          innerHTML: $(this).html(),
+          innerText: $(this).text(),
+        }
+
+        if ($(this)[0].attribs) {
+          Object.entries($(this)[0].attribs).forEach((attr) => {
+            out[attr[0].toLowerCase()] = attr[1]
+          })
+        }
+
+        arr.push(out)
+      }
+    })
+
+    return arr
+  }
 }
 
-const parseHtmlFactory = ({ fs, parse }) => (file) => {
+const parseHtmlFactory = ({ fs, getAttributes }) => (file) => {
   const html = fs.readFileSync(file, 'utf-8')
-  const $ = parse(html)
-  const $attributes = getAttributes($)
+  const $attributes = getAttributes(html)
 
   return {
     results: {
@@ -60,9 +65,10 @@ const parseHtmlFactory = ({ fs, parse }) => (file) => {
   }
 }
 
-const parseHtml = parseHtmlFactory({ fs, parse: cheerio.load })
+const parseHtml = parseHtmlFactory({ fs, getAttributes })
 
 export {
+  getAttributes,
   parseHtml,
   parseHtmlFactory,
 }
