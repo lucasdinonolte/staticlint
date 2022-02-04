@@ -19,10 +19,8 @@ const stylings = {
   secondary: chalk.grey,
 }
 
-// IDEA: Add more commands
-// - generate config file
 const prog = sade('und-check')
-  .version('0.1.0')
+  .version('0.2.0')
 
 prog
   .command('check <dir>', '', { default: true })

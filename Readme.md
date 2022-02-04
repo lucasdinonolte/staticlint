@@ -6,11 +6,11 @@ CLI tool to check the output of a static site generator for common errors.
 ### 1. Install package
 via NPM
 ```bash
-$ npm install @und-pohlen/und-check@0.1.0
+$ npm install @und-pohlen/und-check@0.2.0
 ```
 or YARN
 ```bash
-$ yarn add @und-pohlen/und-check@0.1.0
+$ yarn add @und-pohlen/und-check@0.2.0
 ```
 
 ### 2. Add a script to `package.json`
@@ -24,6 +24,14 @@ Add `und-check.config.js` to your project root. (See below for details about the
 
 `und-check.config.js` is expected to be an ES module (`export` syntax). So
 depending on your project, you might need to use the `.mjs` file extension.
+
+You can also generate an empty config file using the und-check CLI in your
+project's root.
+
+```bash
+und-check scaffold
+```
+
 
 ## Usage
 ```bash
@@ -59,10 +67,7 @@ export default {
   ignoreRules: [],
 
   // Create custom rules
-  customRules: {
-    folder: [],
-    html: [],
-  },
+  customRules: [],
 
   // Output both errors and warnings
   display: ['errors', 'warnings'],
