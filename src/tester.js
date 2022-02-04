@@ -92,6 +92,8 @@ const testFile = async (file, rules, { config }) => {
   rules.map((rule) => {
     if (!config.ignoreRules.includes(rule.name)) runRule(rule)
   })
+
+  return { errors, warnings }
 }
 
 export { makeTestRunner, testHtmlFile, testFile, testFolder }

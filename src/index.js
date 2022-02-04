@@ -68,11 +68,12 @@ export default async function(dir, _config = {}) {
 
   // Next it performs generic file rules
   for (const [fileGlob, rules] of Object.entries(fileRulesByGlob)) {
-    const files = glob.sync(path.join(dir, fileGlob))
-    await files.forEach(async (file) => {
+    const filesToTest = glob.sync(path.join(dir, fileGlob))
+    for (let i = 0; i < filesToTest.length; i++) {
+      const file = filesToTest[i]
       const results = await testFile(file, rules, { config })
       files[file] = { errors: results.errors, warnings: results.warnings }
-    })
+    }
   }
   
   // Restructure the errors and warnings
