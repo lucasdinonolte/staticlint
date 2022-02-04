@@ -21,6 +21,27 @@ const Cache = {
   },
 }
 
+// Util to build rules from a given config
+const buildRulesFromConfig = (config, ruleType) => {
+  return [
+    config.rules.filter(r => (typeof r[ruleType] === 'function')),
+    config.customRules.filter(r => (typeof r[ruleType] === 'function')),
+  ].flat().filter(r => !config.ignoreRules.includes(r.name))
+}
+
+// Restructure the errors and warnings
+const buildErrorMessages = (file, messages, severity = 'error') => {
+  return Object.keys(messages).map((key) => {
+    return messages[key].map((m) => ({
+      file, 
+      severity,
+      rule: key,
+      message: m,
+    }))
+  }).flat()
+}
+
+
 /**
  * Checks a directory
  * Returns an object with errors and warnings.
@@ -29,65 +50,42 @@ const Cache = {
  * @param und-check configuration object
  */
 export default async function(dir, _config = {}) {
+  // Check if the target dir exists
   if (!fs.existsSync(dir)) throw new Error(`${dir} does not exist`)
 
-  const files = {}
   const config = Object.assign(defaultConfig, _config)
 
   // Figure out the rules
-  const folderRules = [
-    config.rules.filter(r => (typeof r.folder === 'function')),
-    config.customRules.filter(r => (typeof r.folder === 'function')),
-  ].flat()
+  const folderRules = buildRulesFromConfig(config, 'folder')
+  const fileRules = buildRulesFromConfig(config, 'file') 
+  const htmlRules = buildRulesFromConfig(config, 'html')
 
-  const fileRules = [
-    config.rules.filter(r => (typeof r.file === 'function')),
-    config.customRules.filter(r => (typeof r.file === 'function')),
-  ].flat()
-
-  const fileRulesByGlob = groupBy(fileRules, 'files')
-
-  const htmlRules = [
-    config.rules.filter(r => (typeof r.html === 'function')),
-    config.customRules.filter(r => (typeof r.html === 'function')),
-  ].flat()
+  const files = {}
 
   // First it performs rules from the folder namespace
   const folderResults = testFolder(dir, folderRules, { config }) 
   files[dir] = { errors: folderResults.errors, warnings: folderResults.warnings }
   
-  // Next it performs rules from the html namespace
-  const htmlFiles = glob.sync(path.join(dir, '**/*.html')) 
-  
-  for (let i = 0; i < htmlFiles.length; i++) {
-    const file = htmlFiles[i]
-    const html = fs.readFileSync(path.resolve(file), 'utf-8')
-    const fileResults = await testHtmlFile(html, htmlRules, { config, cache: Cache })
-    files[file] = { errors: fileResults.errors, warnings: fileResults.warnings }
-  }
-
-  // Next it performs generic file rules
-  for (const [fileGlob, rules] of Object.entries(fileRulesByGlob)) {
+  // Utility to build file tester
+  const runFileTester = async (fileGlob, { rules, testRunner }) => {
     const filesToTest = glob.sync(path.join(dir, fileGlob))
     for (let i = 0; i < filesToTest.length; i++) {
       const file = filesToTest[i]
-      const results = await testFile(file, rules, { config })
+      const results = await testRunner(file, rules, { config, cache: Cache })
       files[file] = { errors: results.errors, warnings: results.warnings }
     }
   }
   
-  // Restructure the errors and warnings
-  const buildErrorMessages = (file, messages, severity = 'error') => {
-    return Object.keys(messages).map((key) => {
-      return messages[key].map((m) => ({
-        file, 
-        severity,
-        rule: key,
-        message: m,
-      }))
-    }).flat()
-  }
+  // Next it performs rules from the html namespace
+  await runFileTester('**/*.html', { rules: htmlRules, testRunner: testHtmlFile })
 
+  // Next it performs generic file rules
+  const fileRulesByGlob = groupBy(fileRules, 'files')
+
+  for (const [fileGlob, rules] of Object.entries(fileRulesByGlob)) {
+    await runFileTester(fileGlob, { rules, testRunner: testFile })
+  }
+  
   const _tempErrors = []
   const _tempWarnings = []
 
@@ -99,11 +97,8 @@ export default async function(dir, _config = {}) {
     _tempWarnings.push(buildErrorMessages(key, file.warnings, WARNINGS))
   }
 
-  const errors = _tempErrors.flat()
-  const warnings = _tempWarnings.flat()
-
   return {
-    errors,
-    warnings,
+    errors: _tempErrors.flat(),
+    warnings: _tempWarnings.flat(),
   }
 }

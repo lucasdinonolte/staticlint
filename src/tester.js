@@ -1,3 +1,5 @@
+import fs from 'fs'
+
 import { parseHtml } from './util/html.js'
 
 /**
@@ -31,21 +33,18 @@ const testFolder = function(folder, rules, { config }) {
     rule.folder(folder, { test, lint, config })
   }
 
-  rules.map((rule) => {
-    if (!config.ignoreRules.includes(rule.name)) runRule(rule)
-  })
+  rules.forEach((rule) => runRule(rule))
 
   return { errors, warnings }
 }
 
 /**
- * This only takes an HTML string and does not read from the file itself
- * to be more encapsulated and easier to test.
- *
  * @param HTML string to test
  * @param und-check configuration object
  */
-const testHtmlFile = async (html, rules, { config, cache }) => {
+const testHtmlFile = async (file, rules, { config, cache }) => {
+  const html = fs.readFileSync(file, 'utf-8')
+
   const errors = {}
   const warnings = {}
 
@@ -64,7 +63,7 @@ const testHtmlFile = async (html, rules, { config, cache }) => {
 
   for (let i = 0; i < rulesToRun.length; i++) {
     const rule = rulesToRun[i]
-    if (!config.ignoreRules.includes(rule.name)) await runRule(rule)
+    await runRule(rule)
   }
 
   return { errors, warnings }
@@ -89,9 +88,7 @@ const testFile = async (file, rules, { config }) => {
     await rule.file(file, { test, lint, config })
   }
 
-  rules.map((rule) => {
-    if (!config.ignoreRules.includes(rule.name)) runRule(rule)
-  })
+  await rules.map(async (rule) => await runRule(rule))
 
   return { errors, warnings }
 }
