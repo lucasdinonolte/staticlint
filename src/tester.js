@@ -1,5 +1,3 @@
-import fs from 'fs'
-
 import { parseHtml } from './util/html.js'
 
 /**
@@ -42,13 +40,11 @@ const testFolder = function(folder, rules, { config }) {
  * @param HTML string to test
  * @param und-check configuration object
  */
-const testHtmlFile = async (file, rules, { config, cache }) => {
-  const html = fs.readFileSync(file, 'utf-8')
-
+const testHtmlFileFactory = (deps) => async (file, rules, { config, cache }) => {
   const errors = {}
   const warnings = {}
 
-  const { results, $attributes } = parseHtml(html)
+  const { results, $attributes } = deps.parseHtml(file)
 
   // Refactor: This could be a global factory function that accepts a callback
   const runRule = async (rule) => {
@@ -68,6 +64,8 @@ const testHtmlFile = async (file, rules, { config, cache }) => {
 
   return { errors, warnings }
 }
+
+const testHtmlFile = testHtmlFileFactory({ parseHtml })
 
 /**
  * Generic test runner for files
@@ -93,4 +91,10 @@ const testFile = async (file, rules, { config }) => {
   return { errors, warnings }
 }
 
-export { makeTestRunner, testHtmlFile, testFile, testFolder }
+export {
+  makeTestRunner,
+  testHtmlFileFactory,
+  testHtmlFile,
+  testFile,
+  testFolder,
+}
