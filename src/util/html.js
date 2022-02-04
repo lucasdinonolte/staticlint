@@ -1,3 +1,4 @@
+import fs from 'fs'
 import cheerio from 'cheerio'
 
 /**
@@ -31,8 +32,9 @@ const getAttributes = $ => (search) => {
   return arr
 }
 
-const parseHtml = function(html) {
-  const $ = cheerio.load(html)
+const parseHtmlFactory = ({ fs, parse }) => (file) => {
+  const html = fs.readFileSync(file, 'utf-8')
+  const $ = parse(html)
   const $attributes = getAttributes($)
 
   return {
@@ -58,6 +60,9 @@ const parseHtml = function(html) {
   }
 }
 
+const parseHtml = parseHtmlFactory({ fs, parse: cheerio.load })
+
 export {
   parseHtml,
+  parseHtmlFactory,
 }

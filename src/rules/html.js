@@ -14,7 +14,7 @@ const cleanString = (str) =>
 export const htmlRules = [{
   name: 'html.lang',
   description: 'Validates the presence of a lang attribute on the html tag',
-  run: (payload, { test }) => {
+  html: (payload, { test }) => {
     const html = payload.html
     if (html.length !== 1) return
 
@@ -27,7 +27,7 @@ export const htmlRules = [{
 }, {
   name: 'html.title',
   description: 'Checks if a title tag is present',
-  run: (payload, { test, lint }) => {
+  html: (payload, { test, lint }) => {
     const titles = payload.title
 
     // Test for presence of one and only one title tag
@@ -84,7 +84,7 @@ export const htmlRules = [{
 }, {
   name: 'html.meta.viewport',
   description: 'Checks for meta viewport tag',
-  run: (payload, { test }) => {
+  html: (payload, { test }) => {
     const viewport = payload.meta.find((m) => m.name === 'viewport')
       
     test(
@@ -117,7 +117,7 @@ export const htmlRules = [{
 }, {
   name: 'html.meta.description',
   description: 'Validates presence of meta description',
-  run: (payload, { test, lint }) => {
+  html: (payload, { test, lint }) => {
     const metas = payload.meta.filter((m) => m.name && m.name.toLowerCase() === 'description')
 
     test(
@@ -181,7 +181,7 @@ export const htmlRules = [{
 }, {
   name: 'html.img.alt',
   description: 'Validates presence of alt tags for all images',
-  run: (payload, { test }) => {
+  html: (payload, { test }) => {
     payload.imgs.forEach((i) => {
       test(
         assert.ok,
@@ -193,7 +193,7 @@ export const htmlRules = [{
 }, {
   name: 'html.brokenLinks',
   description: 'Checks if all external links are working',
-  run: async (payload, { test, config }) => {
+  html: async (payload, { test, config }) => {
     const external = payload.aTags.filter((l) => (l.href.includes('http') && !l.href.includes(config.host)))
 
     for (let i = 0; i < external.length; i++) {
@@ -209,7 +209,7 @@ export const htmlRules = [{
 }, {
   name: 'html.missingImages',
   description: 'Checks for missing external images',
-  run: async (payload, { test, config }) => {
+  html: async (payload, { test, config }) => {
     const external = payload.imgs.filter((i) => (i.src.includes('http') && !i.src.includes(config.host)))
 
     for (let i = 0; i < external.length; i++) {
@@ -227,7 +227,7 @@ export const htmlRules = [{
 }, {
   name: 'html.maxOutboundLinks',
   descriptions: 'Checks if there are a lot of outbound links on a page',
-  run: (payload, { lint, config }) => {
+  html: (payload, { lint, config }) => {
     const external = payload.aTags.filter((l) => (l.href.includes('http') && !l.href.includes(config.host)))
 
     lint(
@@ -239,7 +239,7 @@ export const htmlRules = [{
 }, {
   name: 'html.favicon',
   description: 'Checks if favicon is set',
-  run: (payload, { test }) => {
+  html: (payload, { test }) => {
     const favicons = payload.linkTags.filter(l => l.rel === 'shortcut icon')
 
     test(
@@ -252,7 +252,7 @@ export const htmlRules = [{
 }, {
   name: 'html.internalLinks',
   descriptions: 'Checks if internal links are well formated',
-  run: (payload, { lint, test, config }) => {
+  html: (payload, { lint, test, config }) => {
     const internal = payload.aTags.filter((l) => (l.href.includes(config.host) || !l.href.includes('http')))
       .map((l) => {
         if (l.href.includes('#')) l.href = l.href.split('#')[0]
@@ -288,7 +288,7 @@ export const htmlRules = [{
 }, {
   name: 'html.noVideo',
   description: 'Warns if self hosted video is found',
-  run: (payload, { lint, config }) => {
+  html: (payload, { lint, config }) => {
     const internal = payload.videos.filter((v) => (v.src.includes(config.host) || !v.src.includes('http')))
 
     lint(

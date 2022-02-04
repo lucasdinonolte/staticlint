@@ -18,7 +18,7 @@ const makeTestRunner = (name, severity) => {
   }
 }
 
-const testFolder = function(folder, config) {
+const testFolder = function(folder, rules, { config }) {
   const errors = {}
   const warnings = {}
 
@@ -28,28 +28,23 @@ const testFolder = function(folder, config) {
 
     const test = makeTestRunner(name, errors)
     const lint = makeTestRunner(name, warnings)
-    rule.run(folder, { test, lint, config })
+    rule.folder(folder, { test, lint, config })
   }
 
-  [config.rules.folder, config.customRules.folder].flat().map((rule) => {
-    if (!config.ignoreRules.includes(rule.name)) runRule(rule)
-  })
+  rules.forEach((rule) => runRule(rule))
 
   return { errors, warnings }
 }
 
 /**
- * This only takes an HTML string and does not read from the file itself
- * to be more encapsulated and easier to test.
- *
  * @param HTML string to test
  * @param und-check configuration object
  */
-const testFile = async (html, { config, cache }) => {
+const testHtmlFileFactory = (deps) => async (file, rules, { config, cache }) => {
   const errors = {}
   const warnings = {}
 
-  const { results, $attributes } = parseHtml(html)
+  const { results, $attributes } = deps.parseHtml(file)
 
   // Refactor: This could be a global factory function that accepts a callback
   const runRule = async (rule) => {
@@ -57,17 +52,49 @@ const testFile = async (html, { config, cache }) => {
 
     const test = makeTestRunner(name, errors)
     const lint = makeTestRunner(name, warnings)
-    await rule.run(results, { test, lint, config, cache, $attributes })
+    await rule.html(results, { test, lint, config, cache, $attributes })
   }
 
-  const rulesToRun = [config.rules.html, config.customRules.html].flat()
+  const rulesToRun = rules
 
   for (let i = 0; i < rulesToRun.length; i++) {
     const rule = rulesToRun[i]
-    if (!config.ignoreRules.includes(rule.name)) await runRule(rule)
+    await runRule(rule)
   }
 
   return { errors, warnings }
 }
 
-export { makeTestRunner, testFile, testFolder }
+const testHtmlFile = testHtmlFileFactory({ parseHtml })
+
+/**
+ * Generic test runner for files
+ *
+ * @param path to file
+ * @param und-check configuration object
+ */
+const testFile = async (file, rules, { config }) => {
+  const errors = {}
+  const warnings = {}
+
+  const runRule = async(rule) => {
+    const name = rule.name
+
+    const test = makeTestRunner(name, errors)
+    const lint = makeTestRunner(name, warnings)
+
+    await rule.file(file, { test, lint, config })
+  }
+
+  await rules.map(async (rule) => await runRule(rule))
+
+  return { errors, warnings }
+}
+
+export {
+  makeTestRunner,
+  testHtmlFileFactory,
+  testHtmlFile,
+  testFile,
+  testFolder,
+}

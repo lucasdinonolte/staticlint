@@ -10,12 +10,8 @@ describe('Configuration', () => {
     expect(await mergeConfigurations('./specs/fixtures/empty.config.js')).toStrictEqual({
       host: 'https://spec-host.com/',
       ignoreRules: [],
-      customRules: {
-        folder: [],
-        html: [],
-      },
-      rules: {
-      },
+      customRules: [],
+      rules: [],
       display: [],
       failOn: [],
     })

@@ -5,7 +5,7 @@ import path from 'path'
 export const folderRules = [{
   name: 'folder.sitemap',
   description: 'Validates presence of sitemap.xml',
-  run: (folder, { test }) => {
+  folder: (folder, { test }) => {
     test(
       assert.ok,
       fs.existsSync(path.join(folder, 'sitemap.xml')),
@@ -15,7 +15,7 @@ export const folderRules = [{
 }, {
   name: 'folder.htaccess',
   description: 'Checks if .htaccess is present',
-  run: (folder, { lint }) => {
+  folder: (folder, { lint }) => {
     lint(
       assert.ok,
       fs.existsSync(path.join(folder, '.htaccess')),
@@ -25,7 +25,7 @@ export const folderRules = [{
 }, {
   name: 'folder.robots',
   description: 'Checks presence of robots.txt',
-  run: (folder, { lint }) => {
+  folder: (folder, { lint }) => {
     lint(
       assert.strictEqual,
       fs.existsSync(path.join(folder, 'robots.txt')),
