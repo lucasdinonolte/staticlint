@@ -66,8 +66,8 @@ export default async function(dir, _config = {}) {
     const key = Object.keys(files)[i]
     const file = files[key]
 
-    if (config.display.includes(ERRORS)) _tempErrors.push(buildErrorMessages(key, file.errors))
-    if (config.display.includes(WARNINGS)) _tempWarnings.push(buildErrorMessages(key, file.warnings, 'warning'))
+    _tempErrors.push(buildErrorMessages(key, file.errors, ERRORS))
+    _tempWarnings.push(buildErrorMessages(key, file.warnings, WARNINGS))
   }
 
   const errors = _tempErrors.flat()

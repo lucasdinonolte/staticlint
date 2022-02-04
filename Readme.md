@@ -66,5 +66,8 @@ export default {
 
   // Output both errors and warnings
   display: ['errors', 'warnings'],
+
+  // Return with an error exit code if errors were found
+  failOn: ['errors'],
 }
 ```

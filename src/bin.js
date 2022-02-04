@@ -12,16 +12,16 @@ import { mergeConfigurations } from './configuration.js'
 import { ERRORS, WARNINGS } from './constants.js'
 
 const stylings = {
-  error: chalk.red,
-  warning: chalk.yellow,
+  errors: chalk.red,
+  warnings: chalk.yellow,
   info: chalk.bgGrey,
   success: chalk.bgGreen,
   secondary: chalk.grey,
 }
 
 const icons = {
-  error: '×',
-  warning: '!', 
+  errors: '×',
+  warnings: '!', 
 }
 
 // IDEA: Add more commands
@@ -50,7 +50,7 @@ prog
     const output = groupBy([errors, warnings].flat(), 'file')
     const outputMessages = function(messages) {
       messages.forEach(m => {
-        console.log(`  ${stylings[m.severity](icons[m.severity])} ${stylings.secondary(m.rule)} ${m.message}`)
+        if (config.display.includes(m.severity)) console.log(`  ${stylings[m.severity](icons[m.severity])} ${stylings.secondary(m.rule)} ${m.message}`)
       })
     }
 
@@ -66,10 +66,10 @@ prog
     console.log(chalk.bold('Time'), '       ', chalk.white(Math.round((end - start)) / 1000 + 's'))
 
     // Output number of errors and warnings
-    console.log(chalk.bold('Errors'), '     ', chalk.red.bold(errors.length))
-    console.log(chalk.bold('Warnings'), '   ', chalk.yellow.bold(warnings.length))
+    if (config.display.includes(ERRORS)) console.log(chalk.bold('Errors'), '     ', chalk.red.bold(errors.length))
+    if (config.display.includes(WARNINGS)) console.log(chalk.bold('Warnings'), '   ', chalk.yellow.bold(warnings.length))
 
-    if (errors.length > 0) {
+    if ((errors.length > 0 && config.failOn.includes(ERRORS)) || (warnings.length > 0 && config.failOn.includes(WARNINGS))) {
       console.log(chalk.bold.red('\nCheck failed. See above for details'))
       process.exit(1) 
     }
@@ -106,6 +106,11 @@ prog
 
   // Output both errors and warnings
   display: ['${ERRORS}', '${WARNINGS}'],
+
+  // If errors occur let the CLI exit with an error exit code
+  // This will stop your build in a CI and prevent a broken site
+  // from being deployed.
+  failOn: ['${ERRORS}'], 
 }`
 
     const outputPath = path.join(process.cwd(), 'und-check.config.js')

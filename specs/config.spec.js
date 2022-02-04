@@ -17,6 +17,7 @@ describe('Configuration', () => {
       rules: {
       },
       display: [],
+      failOn: [],
     })
   })
 })

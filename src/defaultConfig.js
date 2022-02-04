@@ -15,4 +15,5 @@ export const defaultConfig = {
     html: [htmlRules, seoRules].flat(),
   },
   display: [ERRORS, WARNINGS],
+  failOn: [ERRORS],
 }
