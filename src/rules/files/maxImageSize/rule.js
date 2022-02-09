@@ -6,7 +6,7 @@ const fileSizeInKilobytes = (file) => {
   return size / 1024
 }
 
-export const fileRules = [{
+export default {
   name: 'file.maxImageSize',
   description: 'Warns if included images are above 500kb in size',
   files: '**/*.{jpg,jpeg,png,gif,webp}',
@@ -19,4 +19,4 @@ export const fileRules = [{
       `This image is pretty big (${Math.round(size * 100) / 100} kb).`,
     )
   },
-}]
+}

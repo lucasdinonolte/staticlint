@@ -1,7 +1,7 @@
-import { htmlRules } from './rules/html.js'
-import { seoRules } from './rules/seo.js'
-import { folderRules } from './rules/folder.js'
-import { fileRules } from './rules/files.js'
+import htmlRules from './rules/html/index.js'
+import seoRules from './rules/seo/index.js'
+import folderRules from './rules/folder/index.js'
+import fileRules from './rules/files/index.js'
 import { ERRORS, WARNINGS } from './constants.js'
 
 export const defaultConfig = {

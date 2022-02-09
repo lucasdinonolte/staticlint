@@ -2,6 +2,11 @@ import { parseHtmlFactory, getAttributes } from '../src/util/html.js'
 
 describe('HTML Parser', () => {
   describe('getAttributes', () => {
+    it('should handle gibberish', () => {
+      const $attributes = getAttributes('<asdnlka <Anyhting but <<HTML')
+      expect($attributes('div').length).toBe(0)
+    })
+
     it('should transform HTML into a lookup function', () => {
       const html = '<p>Hallo</p><p>Hello</p><div>Yes!</div>'
       const $attributes = getAttributes(html)

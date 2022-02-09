@@ -1,52 +1,6 @@
 import assert from 'assert'
 
-export const seoRules = [{
-  name: 'seo.canonical',
-  description: 'Validates the presence of a canonical tag',
-  html: (payload, { test, config }) => {
-    const canonicals = payload.canonical
-
-    test(
-      assert.strictEqual,
-      canonicals.length,
-      1,
-      `There should be 1 canonical tag (<link rel="canonical"). Found ${canonicals.length}`,
-    )
-
-    if (canonicals.length !== 1) return
-
-    test(
-      assert.ok,
-      !!canonicals[0].href,
-      'Canonical tag should have a href attribute',
-    )
-
-    if (config.host) {
-      test(
-        assert.ok,
-        canonicals[0].href.includes(config.host),
-        `Canonical tag href should include the host: ${config.host}`,
-      )
-    }
-  },
-}, {
-  name: 'seo.uniqueTitle',
-  description: 'Validates that every title is only used once',
-  html: (payload, { test, cache }) => {
-    const titles = payload.title
-    if (titles.length !== 1) return
-  
-    const title = titles[0].innerText
-    
-    test(
-      assert.ok,
-      !cache.includes('seo.uniqueTitle', title),
-      `Each page should have a unique titles. "${title}" is used multiple times`,
-    )
-
-    cache.push('seo.uniqueTitle', title)
-  },
-}, {
+export default {
   name: 'seo.headings',
   description: 'Validates the proper use of headline tags',
   html: (payload, { test, lint }) => {
@@ -107,4 +61,4 @@ export const seoRules = [{
     compareHeadingLevels(h5s, h4s, 'There are h5 tags but no h4 tag')
     compareHeadingLevels(h6s, h5s, 'There are h6 tags but no h5 tag')
   },
-}]
+}

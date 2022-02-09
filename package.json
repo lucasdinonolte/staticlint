@@ -19,7 +19,9 @@
   "scripts": {
     "cli": "node src/bin.js",
     "lint": "eslint .",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest specs/ --verbose"
+    "test": "pnpm run test:core && pnpm run test:rules",
+    "test:rules": "NODE_OPTIONS=--experimental-vm-modules jest src/rules/*/*/spec.js --verbose",
+    "test:core": "NODE_OPTIONS=--experimental-vm-modules jest specs/ --verbose"
   },
   "bin": {
     "und-check": "src/bin.js"
