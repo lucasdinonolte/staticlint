@@ -1,2 +1,3 @@
 specs/**/*.js
 test/**/*.js
+**/*/spec.js

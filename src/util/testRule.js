@@ -1,4 +1,4 @@
-import { testFolder, testFile, testHtmlFileFactory } from '../../src/tester.js'
+import { testHtmlFileFactory } from '../../src/tester.js'
 import { parseHtmlFactory, getAttributes } from '../../src/util/html.js'
 
 const parseHtml = parseHtmlFactory({
