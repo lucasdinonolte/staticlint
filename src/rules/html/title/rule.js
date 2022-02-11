@@ -52,7 +52,7 @@ export default {
     stopWords.forEach((sw) => {
       lint(
         assert.ok,
-        titles[0].innerText.toLowerCase().indexOf(` ${sw} `),
+        !(titles[0].innerText.toLowerCase().includes(` ${sw} `)),
         `Title tag includes stopword ${sw}`,
       )
     })

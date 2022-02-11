@@ -21,6 +21,8 @@ export default {
       'Meta Viewport should have a content attribute',
     )
 
+    if (!viewport.content) return
+
     test(
       assert.ok,
       viewport.content.includes('width=device-width'),
