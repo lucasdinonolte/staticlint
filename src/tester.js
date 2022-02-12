@@ -18,7 +18,7 @@ const makeTestRunner = (name, severity) => {
   }
 }
 
-const testFolder = function(folder, rules, { config }) {
+const testFolder = function(folder, rules, { config }, depsForRule) {
   const errors = {}
   const warnings = {}
 
@@ -28,7 +28,7 @@ const testFolder = function(folder, rules, { config }) {
 
     const test = makeTestRunner(name, errors)
     const lint = makeTestRunner(name, warnings)
-    rule.folder(folder, { test, lint, config })
+    rule.folder(folder, { test, lint, config }, depsForRule)
   }
 
   rules.forEach((rule) => runRule(rule))
@@ -40,7 +40,7 @@ const testFolder = function(folder, rules, { config }) {
  * @param HTML string to test
  * @param und-check configuration object
  */
-const testHtmlFileFactory = (deps) => async (file, rules, { config, cache }) => {
+const testHtmlFileFactory = (deps) => async (file, rules, { config, cache }, depsForRule) => {
   const errors = {}
   const warnings = {}
 
@@ -52,7 +52,7 @@ const testHtmlFileFactory = (deps) => async (file, rules, { config, cache }) => 
 
     const test = makeTestRunner(name, errors)
     const lint = makeTestRunner(name, warnings)
-    await rule.html(results, { test, lint, config, cache, $attributes })
+    await rule.html(results, { test, lint, config, cache, $attributes }, depsForRule)
   }
 
   const rulesToRun = rules

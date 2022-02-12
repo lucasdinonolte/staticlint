@@ -5,10 +5,10 @@ import path from 'path'
 export default {
   name: 'folder.htaccess',
   description: 'Checks if .htaccess is present',
-  folder: (folder, { lint }) => {
+  folder: (folder, { lint }, deps = { fs, path }) => {
     lint(
       assert.ok,
-      fs.existsSync(path.join(folder, '.htaccess')),
+      deps.fs.existsSync(deps.path.join(folder, '.htaccess')),
       'No .htaccess found',
     )
   },

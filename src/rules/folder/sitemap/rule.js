@@ -5,10 +5,10 @@ import path from 'path'
 export default {
   name: 'folder.sitemap',
   description: 'Validates presence of sitemap.xml',
-  folder: (folder, { test }) => {
+  folder: (folder, { test }, deps = { path, fs }) => {
     test(
       assert.ok,
-      fs.existsSync(path.join(folder, 'sitemap.xml')),
+      deps.fs.existsSync(deps.path.join(folder, 'sitemap.xml')),
       'No sitemap.xml found',
     )
   },

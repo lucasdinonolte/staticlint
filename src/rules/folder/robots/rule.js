@@ -5,10 +5,10 @@ import path from 'path'
 export default {
   name: 'folder.robots',
   description: 'Checks presence of robots.txt',
-  folder: (folder, { lint }) => {
+  folder: (folder, { lint }, deps = { path, fs }) => {
     lint(
       assert.strictEqual,
-      fs.existsSync(path.join(folder, 'robots.txt')),
+      deps.fs.existsSync(deps.path.join(folder, 'robots.txt')),
       true,
       'No robots.txt found',
     )
