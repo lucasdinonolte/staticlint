@@ -6,16 +6,16 @@ CLI tool to check the output of a static site generator for common errors.
 ### 1. Install package
 via NPM
 ```bash
-$ npm install @und-pohlen/und-check@0.2.0
+$ npm install @und-pohlen/und-check@0.2.1
 ```
 or YARN
 ```bash
-$ yarn add @und-pohlen/und-check@0.2.0
+$ yarn add @und-pohlen/und-check@0.2.1
 ```
 
 ### 2. Add a script to `package.json`
 ```json
-"test": "und-check BUILD_FOLDER --config=./und-check.config.js",
+"test": "und-check BUILD_FOLDER --config=./und-check.config.mjs",
 ```
 Replace `BUILD_FOLDER` with the path to your final build directory.
 
@@ -42,7 +42,7 @@ $ und-check ./dist --host="https://example.com/"
 You can also use und-check from within your own script like so.
 
 ```js
-import check from './index.js'
+import check from '@und-pohlen/und-check'
 
 // See below for config example
 const { errors, warnings } = await check('./BUILD_FOLDER', config)

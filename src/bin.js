@@ -20,12 +20,12 @@ const stylings = {
 }
 
 const prog = sade('und-check')
-  .version('0.2.0')
+  .version('0.2.1')
 
 prog
   .command('check <dir>', '', { default: true })
   .describe('Checks the output of a SSG for common issues.')
-  .option('--config', 'Path to custom config file', 'und-check.config.js')
+  .option('--config', 'Path to custom config file', 'und-check.config.mjs')
   .option('--host', 'Production URL. If set it overrides the host set in your config file', null)
   .action(async (dir, opts) => {
     const start = performance.now()
@@ -71,7 +71,7 @@ prog
 prog
   .command('rules', '')
   .describe('List the rules, that will be applied in the current configuration')
-  .option('--config', 'Path to custom config file', 'und-check.config.js')
+  .option('--config', 'Path to custom config file', 'und-check.config.mjs')
   .action(async (opts) => {
     const config = await mergeConfigurations(opts.config)
     const rules = Object.values(config.rules).flat().map(r => r.name)
@@ -103,7 +103,7 @@ prog
   failOn: ['${ERRORS}'], 
 }`
 
-    const outputPath = path.join(process.cwd(), 'und-check.config.js')
+    const outputPath = path.join(process.cwd(), 'und-check.config.mjs')
     fs.writeFileSync(outputPath, template, { encoding: 'utf-8' })
 
     console.log(`Written config to ${outputPath}`)

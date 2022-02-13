@@ -15,7 +15,7 @@ const _loadExternalConfiguration = async (externalConfig) => {
   return config
 }
 
-const mergeConfigurations = async (externalConfig = 'und-check.config.js') => {
+const mergeConfigurations = async (externalConfig = 'und-check.config.mjs') => {
   return Object.assign(defaultConfig, await _loadExternalConfiguration(externalConfig)) 
 }
 
