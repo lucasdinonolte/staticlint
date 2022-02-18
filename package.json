@@ -13,9 +13,6 @@
       "pre-commit": "pnpm run lint"
     }
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  },
   "scripts": {
     "cli": "node src/bin.js",
     "lint": "eslint .",
