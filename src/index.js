@@ -47,7 +47,7 @@ const buildErrorMessages = (file, messages, severity = 'error') => {
  * Returns an object with errors and warnings.
  *
  * @param directory to check
- * @param und-check configuration object
+ * @param staticlint configuration object
  */
 export default async function(dir, _config = {}) {
   // Check if the target dir exists

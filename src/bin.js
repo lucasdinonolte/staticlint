@@ -19,13 +19,13 @@ const stylings = {
   secondary: chalk.grey,
 }
 
-const prog = sade('und-check')
+const prog = sade('staticlint')
   .version('0.2.1')
 
 prog
   .command('check <dir>', '', { default: true })
   .describe('Checks the output of a SSG for common issues.')
-  .option('--config', 'Path to custom config file', 'und-check.config.mjs')
+  .option('--config', 'Path to custom config file', 'staticlint.config.mjs')
   .option('--host', 'Production URL. If set it overrides the host set in your config file', null)
   .action(async (dir, opts) => {
     const start = performance.now()
@@ -71,11 +71,11 @@ prog
 prog
   .command('rules', '')
   .describe('List the rules, that will be applied in the current configuration')
-  .option('--config', 'Path to custom config file', 'und-check.config.mjs')
+  .option('--config', 'Path to custom config file', 'staticlint.config.mjs')
   .action(async (opts) => {
     const config = await mergeConfigurations(opts.config)
     const rules = Object.values(config.rules).flat().map(r => r.name)
-    console.log('The current configuration will run und-check with the following rules\n')
+    console.log('The current configuration will run staticlint with the following rules\n')
     console.log(rules.join('\n'))
   })
 
@@ -103,7 +103,7 @@ prog
   failOn: ['${ERRORS}'], 
 }`
 
-    const outputPath = path.join(process.cwd(), 'und-check.config.mjs')
+    const outputPath = path.join(process.cwd(), 'staticlint.config.mjs')
     fs.writeFileSync(outputPath, template, { encoding: 'utf-8' })
 
     console.log(`Written config to ${outputPath}`)

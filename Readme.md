@@ -1,4 +1,4 @@
-# und Check
+# Staticlint
 
 CLI tool to check the output of a static site generator for common errors.
 
@@ -6,46 +6,42 @@ CLI tool to check the output of a static site generator for common errors.
 ### 1. Install package
 via NPM
 ```bash
-$ npm install @und-pohlen/und-check@0.2.1
-```
-or YARN
-```bash
-$ yarn add @und-pohlen/und-check@0.2.1
+$ npm install staticlint
 ```
 
 ### 2. Add a script to `package.json`
 ```json
-"test": "und-check BUILD_FOLDER --config=./und-check.config.mjs",
+"test": "staticlint BUILD_FOLDER --config=./staticlint.config.mjs",
 ```
 Replace `BUILD_FOLDER` with the path to your final build directory.
 
 ### 3. Add config
-Add `und-check.config.js` to your project root. (See below for details about the config.)
+Add `staticlint.config.js` to your project root. (See below for details about the config.)
 
-`und-check.config.js` is expected to be an ES module (`export` syntax). So
+`staticlint.config.js` is expected to be an ES module (`export` syntax). So
 depending on your project, you might need to use the `.mjs` file extension.
 
-You can also generate an empty config file using the und-check CLI in your
+You can also generate an empty config file using the staticlint CLI in your
 project's root.
 
 ```bash
-und-check scaffold
+$ staticlint scaffold
 ```
 
 
 ## Usage
 ```bash
-$ und-check ./dist --host="https://example.com/"
+$ staticlint ./dist --host="https://example.com/"
 ```
 
 ## Programmatic Usage
-You can also use und-check from within your own script like so.
+You can also use staticlint from within your own script like so.
 
 ```js
-import check from '@und-pohlen/und-check'
+import staticlint from 'staticlint'
 
 // See below for config example
-const { errors, warnings } = await check('./BUILD_FOLDER', config)
+const { errors, warnings } = await staticlint('./BUILD_FOLDER', config)
 ```
 
 ## Goal
@@ -57,7 +53,7 @@ const { errors, warnings } = await check('./BUILD_FOLDER', config)
 
 ## Configuration File
 ```js
-// und-check.config.js in your project root
+// staticlint.config.js in your project root
 export default {
   // Production URL
   // Heads up, if script is run with --host flag this will be overridden

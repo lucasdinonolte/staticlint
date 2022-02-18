@@ -38,7 +38,7 @@ const testFolder = function(folder, rules, { config }, depsForRule) {
 
 /**
  * @param HTML string to test
- * @param und-check configuration object
+ * @param staticlint configuration object
  */
 const testHtmlFileFactory = (deps) => async (file, rules, { config, cache }, depsForRule) => {
   const errors = {}
@@ -71,7 +71,7 @@ const testHtmlFile = testHtmlFileFactory({ parseHtml })
  * Generic test runner for files
  *
  * @param path to file
- * @param und-check configuration object
+ * @param staticlint configuration object
  */
 const testFile = async (file, rules, { config }) => {
   const errors = {}
