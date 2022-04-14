@@ -71,8 +71,12 @@ export default async function(dir, _config = {}) {
     const filesToTest = glob.sync(path.join(dir, fileGlob))
     for (let i = 0; i < filesToTest.length; i++) {
       const file = filesToTest[i]
-      const results = await testRunner(file, rules, { config, cache: Cache })
-      files[file] = { errors: results.errors, warnings: results.warnings }
+      
+      // Check if it's really a file and not a folder with a file extension
+      if (!fs.lstatSync(file).isDirectory()) {
+        const results = await testRunner(file, rules, { config, cache: Cache })
+        files[file] = { errors: results.errors, warnings: results.warnings }
+      }
     }
   }
   
