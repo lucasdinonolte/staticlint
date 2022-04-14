@@ -20,7 +20,7 @@ const stylings = {
 }
 
 const prog = sade('staticlint')
-  .version('0.2.1')
+  .version('0.1.1')
 
 prog
   .command('check <dir>', '', { default: true })
