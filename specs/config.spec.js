@@ -7,8 +7,11 @@ describe('Configuration', () => {
   })
 
   it('should override default config with external config', async () => {
-    expect(await mergeConfigurations('./specs/fixtures/empty.config.js')).toStrictEqual({
+    expect(
+      await mergeConfigurations('./specs/fixtures/empty.config.js'),
+    ).toStrictEqual({
       host: 'https://spec-host.com/',
+      ignoreFiles: [],
       ignoreRules: [],
       customRules: [],
       rules: [],

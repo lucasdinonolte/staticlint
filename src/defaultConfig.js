@@ -6,6 +6,7 @@ import { ERRORS, WARNINGS } from './constants.js'
 
 export const defaultConfig = {
   host: null,
+  ignoreFiles: [],
   ignoreRules: [],
   customRules: [],
   rules: [folderRules, htmlRules, seoRules, fileRules].flat(),
