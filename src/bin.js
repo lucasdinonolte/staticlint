@@ -19,14 +19,17 @@ const stylings = {
   secondary: chalk.grey,
 }
 
-const prog = sade('staticlint')
-  .version('0.1.1')
+const prog = sade('staticlint').version('0.1.1')
 
 prog
   .command('check <dir>', '', { default: true })
   .describe('Checks the output of a SSG for common issues.')
   .option('--config', 'Path to custom config file', 'staticlint.config.mjs')
-  .option('--host', 'Production URL. If set it overrides the host set in your config file', null)
+  .option(
+    '--host',
+    'Production URL. If set it overrides the host set in your config file',
+    null,
+  )
   .action(async (dir, opts) => {
     const start = performance.now()
 
@@ -41,9 +44,14 @@ prog
 
     // Output the errors and warnings
     const output = groupBy([errors, warnings].flat(), 'file')
-    const outputMessages = function(messages) {
-      messages.forEach(m => {
-        if (config.display.includes(m.severity)) console.log(`  ${stylings[m.severity](ICONS[m.severity])} ${stylings.secondary(m.rule)} ${m.message}`)
+    const outputMessages = function (messages) {
+      messages.forEach((m) => {
+        if (config.display.includes(m.severity))
+          console.log(
+            `  ${stylings[m.severity](ICONS[m.severity])} ${stylings.secondary(
+              m.rule,
+            )} ${m.message}`,
+          )
       })
     }
 
@@ -54,17 +62,34 @@ prog
       console.log('')
     }
 
-    const end = performance.now() 
-    console.log(chalk.bold('Rules'), '      ', chalk.white(config.rules.length + config.customRules.length))
-    console.log(chalk.bold('Time'), '       ', chalk.white(Math.round((end - start)) / 1000 + 's'))
+    const end = performance.now()
+    console.log(
+      chalk.bold('Rules'),
+      '      ',
+      chalk.white(config.rules.length + config.customRules.length),
+    )
+    console.log(
+      chalk.bold('Time'),
+      '       ',
+      chalk.white(Math.round(end - start) / 1000 + 's'),
+    )
 
     // Output number of errors and warnings
-    if (config.display.includes(ERRORS)) console.log(chalk.bold('Errors'), '     ', chalk.red.bold(errors.length))
-    if (config.display.includes(WARNINGS)) console.log(chalk.bold('Warnings'), '   ', chalk.yellow.bold(warnings.length))
+    if (config.display.includes(ERRORS))
+      console.log(chalk.bold('Errors'), '     ', chalk.red.bold(errors.length))
+    if (config.display.includes(WARNINGS))
+      console.log(
+        chalk.bold('Warnings'),
+        '   ',
+        chalk.yellow.bold(warnings.length),
+      )
 
-    if ((errors.length > 0 && config.failOn.includes(ERRORS)) || (warnings.length > 0 && config.failOn.includes(WARNINGS))) {
+    if (
+      (errors.length > 0 && config.failOn.includes(ERRORS)) ||
+      (warnings.length > 0 && config.failOn.includes(WARNINGS))
+    ) {
       console.log(chalk.bold.red('\nCheck failed. See above for details'))
-      process.exit(1) 
+      process.exit(1)
     }
   })
 
@@ -74,8 +99,12 @@ prog
   .option('--config', 'Path to custom config file', 'staticlint.config.mjs')
   .action(async (opts) => {
     const config = await mergeConfigurations(opts.config)
-    const rules = Object.values(config.rules).flat().map(r => r.name)
-    console.log('The current configuration will run staticlint with the following rules\n')
+    const rules = Object.values(config.rules)
+      .flat()
+      .map((r) => r.name)
+    console.log(
+      'The current configuration will run staticlint with the following rules\n',
+    )
     console.log(rules.join('\n'))
   })
 
@@ -87,6 +116,10 @@ prog
   // Production URL
   // Heads up: If you run the CLI with --host flag it will override this
   host: 'https://example.com/', 
+
+  // Specify files to ignore
+  // accepts glob paths
+  ignoreFiles: [],
 
   // Rules to ignore
   ignoreRules: [], 

@@ -59,6 +59,10 @@ export default {
   // Heads up, if script is run with --host flag this will be overridden
   host: 'https://example.com/',
 
+  // Specify files to ignore
+  // accepts glob paths
+  ignoreFiles: [],
+
   // Specify rules to ignore
   ignoreRules: [],
 
