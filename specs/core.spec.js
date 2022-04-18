@@ -1,3 +1,4 @@
+import { it, describe, expect } from 'vitest'
 import { buildFilesToTest, buildRulesFromConfig } from '../src/index.js'
 
 describe('core', () => {

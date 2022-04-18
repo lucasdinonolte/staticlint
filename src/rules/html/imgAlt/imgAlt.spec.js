@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest'
 import rule from './rule.js'
 import runTestForRule from '../../../util/testRule.js'
 
@@ -7,8 +8,8 @@ describe('img.alt', () => {
     expect(results.errors.length).toBe(1)
   })
 
-  it('should return an error if alt attribute is empty', async () => {
+  it('should return a warning if alt attribute is empty', async () => {
     let results = await runTestForRule(rule, '<img src="foo.jpg" alt="" />')
-    expect(results.errors.length).toBe(1)
+    expect(results.warnings.length).toBe(1)
   })
 })

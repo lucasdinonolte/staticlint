@@ -1,3 +1,4 @@
+import { it, describe, expect } from 'vitest'
 import { mergeConfigurations } from '../src/configuration.js'
 import { defaultConfig } from '../src/defaultConfig.js'
 

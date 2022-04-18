@@ -1,3 +1,4 @@
+import { it, describe, expect, beforeEach } from 'vitest'
 import { parseHtmlFactory, getAttributes } from '../src/util/html.js'
 
 describe('HTML Parser', () => {
@@ -16,7 +17,8 @@ describe('HTML Parser', () => {
     })
 
     it('should expose HTML attributes as object keys', () => {
-      const html = '<link rel="stylesheet" href="style.css" /><div data-something="anything">Hallo</div>'
+      const html =
+        '<link rel="stylesheet" href="style.css" /><div data-something="anything">Hallo</div>'
       const $attributes = getAttributes(html)
       const linkTag = $attributes('link')[0]
       const divTag = $attributes('div')[0]
@@ -41,13 +43,13 @@ describe('HTML Parser', () => {
     let html
 
     beforeEach(() => {
-      html = '<html><head><title>Foo</title></head></html>' 
+      html = '<html><head><title>Foo</title></head></html>'
       deps = {
         fs: {
           readFileSync(f) {
-            expect(f).toBe(file) 
+            expect(f).toBe(file)
             return html
-          }
+          },
         },
         getAttributes(h) {
           expect(h).toBe(html)
@@ -57,7 +59,7 @@ describe('HTML Parser', () => {
 
       parseHtml = parseHtmlFactory(deps)
     })
-    
+
     it('should prebuild an object with commonly used query selectors', () => {
       const { results } = parseHtml(file)
       expect(results.title.length).toBe(1)

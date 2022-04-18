@@ -1,13 +1,10 @@
-import jest from 'jest-mock'
+import { it, describe, expect, beforeEach, vi } from 'vitest'
 
 import { testFactory } from '../src/tester.js'
-
-const config = {}
 
 describe('Tester', () => {
   describe('testFactory', () => {
     let fakeTest, mockPrepareInput, mockRunRule
-
     const sampleInput = 'foo.html'
 
     const fakeRule = {
@@ -18,9 +15,9 @@ describe('Tester', () => {
     }
 
     beforeEach(() => {
-      mockPrepareInput = jest.fn()
+      mockPrepareInput = vi.fn()
 
-      mockRunRule = jest.fn().mockImplementation((argObject) => {
+      mockRunRule = vi.fn().mockImplementation((argObject) => {
         expect(argObject.rule).toStrictEqual(fakeRule)
       })
 

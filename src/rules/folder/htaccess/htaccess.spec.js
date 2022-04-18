@@ -1,4 +1,4 @@
-import { jest } from '@jest/globals'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import rule from './rule.js'
 import runTestForRule from '../../../util/testRule.js'
 
@@ -8,10 +8,11 @@ describe('folder.htaccess', () => {
   beforeEach(() => {
     deps = {
       fs: {
-        existsSync: jest.fn((f) => f),
-      }, path: {
-        join: jest.fn((a, b) => `${a}/${b}`),
-      }
+        existsSync: vi.fn((f) => f),
+      },
+      path: {
+        join: vi.fn((a, b) => `${a}/${b}`),
+      },
     }
   })
 

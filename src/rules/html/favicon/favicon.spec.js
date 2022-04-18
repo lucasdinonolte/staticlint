@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest'
 import rule from './rule.js'
 import runTestForRule from '../../../util/testRule.js'
 
@@ -13,7 +14,10 @@ describe('img.favicon', () => {
   })
 
   it('should return an error if favicon has empty href attribute', async () => {
-    let results = await runTestForRule(rule, '<link rel="shortcut icon" href="" />')
+    let results = await runTestForRule(
+      rule,
+      '<link rel="shortcut icon" href="" />',
+    )
     expect(results.errors.length).toBe(1)
   })
 })
