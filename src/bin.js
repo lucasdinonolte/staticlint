@@ -7,7 +7,7 @@ import fs from 'fs'
 import groupBy from 'lodash.groupby'
 import { performance } from 'perf_hooks'
 
-import performTests from './index.js'
+import performTests, { buildRulesFromConfig } from './index.js'
 import { mergeConfigurations } from './configuration.js'
 import { ERRORS, WARNINGS, ICONS } from './constants.js'
 
@@ -99,9 +99,7 @@ prog
   .option('--config', 'Path to custom config file', 'staticlint.config.mjs')
   .action(async (opts) => {
     const config = await mergeConfigurations(opts.config)
-    const rules = Object.values(config.rules)
-      .flat()
-      .map((r) => r.name)
+    const rules = buildRulesFromConfig(config).map((r) => r.name)
     console.log(
       'The current configuration will run staticlint with the following rules\n',
     )

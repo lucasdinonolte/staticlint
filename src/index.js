@@ -24,10 +24,14 @@ const Cache = {
 }
 
 // Util to build rules from a given config
-export const buildRulesFromConfig = (config, ruleType) => {
+export const buildRulesFromConfig = (config, ruleType = null) => {
   return [
-    config.rules.filter((r) => typeof r[ruleType] === 'function'),
-    config.customRules.filter((r) => typeof r[ruleType] === 'function'),
+    config.rules.filter((r) =>
+      ruleType !== null ? typeof r[ruleType] === 'function' : true,
+    ),
+    config.customRules.filter((r) =>
+      ruleType !== null ? typeof r[ruleType] === 'function' : true,
+    ),
   ]
     .flat()
     .filter((r) => !config.ignoreRules.includes(r.name))
@@ -84,7 +88,7 @@ export default async function (dir, _config = {}) {
   const files = {}
 
   // First it performs rules from the folder namespace
-  const folderResults = testFolder(dir, folderRules, { config })
+  const folderResults = await testFolder(dir, folderRules, { config })
   files[dir] = {
     errors: folderResults.errors,
     warnings: folderResults.warnings,

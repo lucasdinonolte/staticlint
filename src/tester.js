@@ -1,100 +1,102 @@
 import { parseHtml } from './util/html.js'
 
-/**
- * Factory function to make a test runner that logs
- * depending on its severity.
- *
- * @param name of the rule
- * @param severity to log to
- */
-const makeTestRunner = (name, severity) => {
-  return (testFunction, ...params) => {
-    try {
-      testFunction(...params)
-    } catch(e) {
-      if (!Object.prototype.hasOwnProperty.call(severity, name)) severity[name] = []
-      severity[name].push(e.message)
+const testFactory = ({ prepareInput, ruleRunner }) => {
+  if (typeof ruleRunner !== 'function') {
+    throw new Error('Rule runner must be a function')
+  }
+
+  /**
+   * Factory function to make a test runner that logs
+   * depending on its severity.
+   *
+   * @param name of the rule
+   * @param severity to log to
+   */
+  const makeTestRunner = (name, severity) => {
+    return (testFunction, ...params) => {
+      try {
+        testFunction(...params)
+      } catch (e) {
+        if (!Object.prototype.hasOwnProperty.call(severity, name))
+          severity[name] = []
+        severity[name].push(e.message)
+      }
     }
   }
-}
 
-const testFolder = function(folder, rules, { config }, depsForRule) {
-  const errors = {}
-  const warnings = {}
+  return async (input, rules, dependencies, depsForRule) => {
+    const errors = {}
+    const warnings = {}
 
+    const preparedInput =
+      typeof prepareInput === 'function'
+        ? await prepareInput.call(null, input)
+        : input
 
-  const runRule = (rule) => {
-    const name = rule.name
+    for (let i = 0; i < rules.length; i++) {
+      const rule = rules[i]
+      const test = makeTestRunner(rule.name, errors)
+      const lint = makeTestRunner(rule.name, warnings)
+      await ruleRunner.call(null, {
+        depsForRule,
+        rule,
+        dependencies,
+        test,
+        lint,
+        input: preparedInput,
+      })
+    }
 
-    const test = makeTestRunner(name, errors)
-    const lint = makeTestRunner(name, warnings)
-    rule.folder(folder, { test, lint, config }, depsForRule)
+    return { errors, warnings }
   }
-
-  rules.forEach((rule) => runRule(rule))
-
-  return { errors, warnings }
 }
 
-/**
- * @param HTML string to test
- * @param staticlint configuration object
- */
-const testHtmlFileFactory = (deps) => async (file, rules, { config, cache }, depsForRule) => {
-  const errors = {}
-  const warnings = {}
-
-  const { results, $attributes } = deps.parseHtml(file)
-
-  // Refactor: This could be a global factory function that accepts a callback
-  const runRule = async (rule) => {
-    const name = rule.name
-
-    const test = makeTestRunner(name, errors)
-    const lint = makeTestRunner(name, warnings)
-    await rule.html(results, { test, lint, config, cache, $attributes }, depsForRule)
-  }
-
-  const rulesToRun = rules
-
-  for (let i = 0; i < rulesToRun.length; i++) {
-    const rule = rulesToRun[i]
-    await runRule(rule)
-  }
-
-  return { errors, warnings }
+const folderRuleRunner = async ({
+  input,
+  rule,
+  dependencies,
+  test,
+  lint,
+  depsForRule,
+}) => {
+  const { config } = dependencies
+  await rule.folder(input, { test, lint, config }, depsForRule)
 }
 
-const testHtmlFile = testHtmlFileFactory({ parseHtml })
+const testFolder = testFactory({
+  ruleRunner: folderRuleRunner,
+})
 
-/**
- * Generic test runner for files
- *
- * @param path to file
- * @param staticlint configuration object
- */
-const testFile = async (file, rules, { config }) => {
-  const errors = {}
-  const warnings = {}
-
-  const runRule = async(rule) => {
-    const name = rule.name
-
-    const test = makeTestRunner(name, errors)
-    const lint = makeTestRunner(name, warnings)
-
-    await rule.file(file, { test, lint, config })
-  }
-
-  await rules.map(async (rule) => await runRule(rule))
-
-  return { errors, warnings }
+const htmlRuleRunner = async ({
+  input,
+  rule,
+  test,
+  lint,
+  depsForRule,
+  dependencies,
+}) => {
+  const { config, cache } = dependencies
+  const { results, $attributes } = input
+  await rule.html(
+    results,
+    { test, lint, config, $attributes, cache },
+    depsForRule,
+  )
 }
 
-export {
-  makeTestRunner,
-  testHtmlFileFactory,
-  testHtmlFile,
-  testFile,
-  testFolder,
-}
+const testHtmlFile = testFactory({
+  prepareInput: async (input) => {
+    const { results, $attributes } = parseHtml(input)
+    return { results, $attributes }
+  },
+  ruleRunner: htmlRuleRunner,
+})
+
+const testFile = testFactory({
+  ruleRunner: async ({ input, rule, test, lint, dependencies }) => {
+    const { config } = dependencies
+    await rule.file(input, { test, lint, config })
+  },
+})
+
+export { testHtmlFile, testFile, testFolder, testFactory, htmlRuleRunner }

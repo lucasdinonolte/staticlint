@@ -1,105 +1,113 @@
-import { testFolder, testFile, testHtmlFileFactory } from '../src/tester.js'
+import jest from 'jest-mock'
+
+import { testFactory } from '../src/tester.js'
 
 const config = {}
 
 describe('Tester', () => {
-  describe('testFolder', () => {
-    it('should return empty error and warnings if no rule is applied', () => {
-      const { errors, warnings } = testFolder('/my/folder', [], {})
-      expect(errors).toStrictEqual({})
-      expect(warnings).toStrictEqual({})
-    })
+  describe('testFactory', () => {
+    let fakeTest, mockPrepareInput, mockRunRule
 
-    it('should properly call each rule', () => {
-      const dir = '/my/folder'
+    const sampleInput = 'foo.html'
 
-      const fakeRule = {
-        folder: (folder, { test, lint, config }) => {
-          expect(folder).toBe(dir)
-          expect(test).toEqual(expect.any(Function))
-          expect(lint).toEqual(expect.any(Function))
-          expect(config).toStrictEqual({})
-        },
-      }
-
-      testFolder(dir, [fakeRule], { config })
-    })
-  })
-  
-  describe('testFile', () => {
-    it('should return empty error and warnings if no rule is applied', async () => {
-      const { errors, warnings } = await testFile('/my/file.txt', [], {})
-      expect(errors).toStrictEqual({})
-      expect(warnings).toStrictEqual({})
-    })
-
-    it('should properly call each rule', async () => {
-      const file = '/my/file.txt'
-
-      const fakeRule = {
-        file: (f, { test, lint, config }) => {
-          expect(f).toBe(file)
-          expect(test).toEqual(expect.any(Function))
-          expect(lint).toEqual(expect.any(Function))
-          expect(config).toStrictEqual({})
-        },
-      }
-
-      await testFile(file, [fakeRule], { config })
-    })
-  })
-
-  describe('testHtmlFile', () => {
-    const file = '/my/file.html'
-
-    const deps = {
-      parseHtml: (f) => {
-        expect(f).toBe(file)
-        return {
-          results: {},
-          $attributes: {},
-        }
+    const fakeRule = {
+      name: 'fakeRule',
+      folder: () => {
+        return 'I am just a fake rule object'
       },
     }
-    let testHtmlFile
 
     beforeEach(() => {
-      testHtmlFile = testHtmlFileFactory(deps)
+      mockPrepareInput = jest.fn()
+
+      mockRunRule = jest.fn().mockImplementation((argObject) => {
+        expect(argObject.rule).toStrictEqual(fakeRule)
+      })
+
+      fakeTest = testFactory({
+        prepareInput: mockPrepareInput,
+        ruleRunner: mockRunRule,
+      })
     })
 
-    it('should return empty error and warnings if no rule is applied', async () => {
-      const { errors, warnings } = await testHtmlFile(file, [], {})
+    it('should return a function', () => {
+      expect(fakeTest).toEqual(expect.any(Function))
+    })
+
+    it('should properly set up test functions', async () => {
+      await fakeTest(sampleInput, [fakeRule], {})
+
+      expect(mockPrepareInput).toHaveBeenCalledWith(sampleInput)
+      expect(mockRunRule).toHaveBeenCalledTimes(1)
+    })
+
+    it('should not call any rule if no rules are supplied', async () => {
+      await fakeTest(sampleInput, [], {})
+
+      expect(mockPrepareInput).toHaveBeenCalledWith(sampleInput)
+      expect(mockRunRule).not.toHaveBeenCalled()
+    })
+
+    it('should call the test runner once for each supplied rule', async () => {
+      await fakeTest(sampleInput, [fakeRule, fakeRule], {})
+      expect(mockRunRule).toHaveBeenCalledTimes(2)
+    })
+
+    it('should throw if no rule runner function is given', () => {
+      expect(() => testFactory({})).toThrow()
+      expect(() => testFactory({ ruleRunner: 'foo' })).toThrow()
+    })
+
+    it('should return empty error and warnings if it is run without rules', async () => {
+      const { errors, warnings } = await fakeTest(sampleInput, [], {})
+
       expect(errors).toStrictEqual({})
       expect(warnings).toStrictEqual({})
     })
 
-    it('should properly call each rule', async () => {
-      const fakeRule = {
-        html: (payload, { test, lint, config }) => {
-          expect(payload).toStrictEqual({})
-          expect(test).toEqual(expect.any(Function))
-          expect(lint).toEqual(expect.any(Function))
-          expect(config).toStrictEqual({})
-        },
+    it('should properly pass needed data to supplied rule runner', async () => {
+      const ruleDependencies = { config: {} }
+
+      const ruleRunner = ({ input, test, lint, rule, dependencies }) => {
+        expect(input).toBe(sampleInput)
+        expect(test).toEqual(expect.any(Function))
+        expect(lint).toStrictEqual(expect.any(Function))
+        expect(rule).toStrictEqual(fakeRule)
+        expect(dependencies).toStrictEqual(ruleDependencies)
       }
 
-      await testHtmlFile(file, [fakeRule], { config })
+      const advancedFakeTester = testFactory({
+        ruleRunner,
+      })
+
+      await advancedFakeTester(sampleInput, [fakeRule], ruleDependencies)
     })
 
-    it('should collect errors and warnings messages', async () => {
+    /* This is more of an integration test */
+    it('should integrate all modules properly', async () => {
+      const ruleRunner = async ({ rule, test, lint }) => {
+        await rule.test({ test, lint })
+      }
+
       const mockTestRunner = () => {
         throw new Error('Error')
       }
 
-      const errorRule = {
+      const fakeRule = {
         name: 'fakeRule',
-        html: (payload, { test, lint }) => {
+        test: async ({ test, lint }) => {
           test(mockTestRunner)
           lint(mockTestRunner)
-        }
+        },
       }
 
-      const { errors, warnings } = await testHtmlFile(file, [errorRule], {})
+      const testingFunction = testFactory({ ruleRunner })
+
+      const { errors, warnings } = await testingFunction(
+        sampleInput,
+        [fakeRule],
+        {},
+      )
 
       expect(errors).toHaveProperty('fakeRule')
       expect(errors.fakeRule.length).toBe(1)
