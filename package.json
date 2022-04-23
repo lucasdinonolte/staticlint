@@ -18,7 +18,8 @@
     "lint": "eslint .",
     "test": "vitest run",
     "coverage": "vitest run --coverage",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "prepare": "husky install"
   },
   "bin": {
     "staticlint": "src/bin.js"
