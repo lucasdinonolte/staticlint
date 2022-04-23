@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 - feat: ignore files from linting using a glob in the config
+- feat: html.linkText rule to validate that links have discernable text or an aria-label describing them
 
 ## 0.1.1
 - fix: explitily check that file to check is not a directory so directories with file extensions in their name do not crash the linter
