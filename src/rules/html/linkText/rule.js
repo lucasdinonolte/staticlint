@@ -3,7 +3,7 @@ import assert from 'assert'
 export default {
   name: 'html.linkText^',
   description: 'Validates that all links have discernable text',
-  html: (payload, { test, lint }) => {
+  html: (payload, { test }) => {
     payload.aTags.forEach((a) => {
       test(
         assert.ok,
