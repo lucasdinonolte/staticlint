@@ -2,7 +2,7 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## UNRELEASED
+## 0.2.0
 
 ### Added
 - feat: ignore files from linting using a glob in the config
