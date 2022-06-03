@@ -4,6 +4,7 @@ import sade from 'sade'
 import chalk from 'chalk'
 import path from 'path'
 import fs from 'fs'
+import url from 'url'
 import groupBy from 'lodash.groupby'
 import inquirer from 'inquirer'
 import { performance } from 'perf_hooks'
@@ -21,7 +22,9 @@ const stylings = {
   secondary: chalk.grey,
 }
 
-const prog = sade('staticlint').version('0.1.1')
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
+const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json')))
+const prog = sade('staticlint').version(pkg.version)
 
 prog
   .command('check <dir>', '', { default: true })
