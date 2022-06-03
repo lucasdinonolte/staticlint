@@ -5,10 +5,12 @@ import chalk from 'chalk'
 import path from 'path'
 import fs from 'fs'
 import groupBy from 'lodash.groupby'
+import inquirer from 'inquirer'
 import { performance } from 'perf_hooks'
 
 import performTests, { buildRulesFromConfig } from './index.js'
 import { mergeConfigurations } from './configuration.js'
+import { defaultConfig } from './defaultConfig.js'
 import { ERRORS, WARNINGS, ICONS } from './constants.js'
 
 const stylings = {
@@ -109,29 +111,87 @@ prog
 prog
   .command('scaffold', '')
   .describe('Builds an empty config file')
-  .action(() => {
+  .action(async () => {
+    const rules = buildRulesFromConfig(defaultConfig).map((r) => r.name)
+
+    const answers = await inquirer.prompt([
+      {
+        name: 'hostName',
+        type: 'input',
+        message:
+          'What’s the production hostname of the website you want to test?',
+        default: 'https://example.com',
+      },
+      {
+        name: 'rulesToInclude',
+        type: 'checkbox',
+        message: 'Which rules do you want to include? (defaults to all rules)',
+        choices: rules.map((r) => ({ name: r, checked: true })),
+      },
+      {
+        name: 'display',
+        type: 'checkbox',
+        message: 'What messages do you want to display in linting output?',
+        choices: [
+          {
+            name: ERRORS,
+            checked: true,
+          },
+          {
+            name: WARNINGS,
+            checked: true,
+          },
+        ],
+      },
+      {
+        name: 'failOn',
+        type: 'checkbox',
+        message: 'On what messages do you want to exit with an error code?',
+        choices: [
+          {
+            name: ERRORS,
+            checked: true,
+          },
+          {
+            name: WARNINGS,
+            checked: false,
+          },
+        ],
+      },
+    ])
+
+    const rulesToIgnore = rules
+      .filter((r) => !answers.rulesToInclude.includes(r))
+      .map((r) => `'${r}'`)
+      .join(', ')
+
+    const display = answers.display.map((d) => `'${d}'`).join(', ')
+    const failOn = answers.failOn.map((f) => `'${f}'`).join(', ')
+
     const template = `export default {
   // Production URL
   // Heads up: If you run the CLI with --host flag it will override this
-  host: 'https://example.com/', 
+  host: '${answers.hostName}', 
 
   // Specify files to ignore
   // accepts glob paths
   ignoreFiles: [],
 
   // Rules to ignore
-  ignoreRules: [], 
+  ignoreRules: [${rulesToIgnore}], 
 
   // Create custom rules
   customRules: [], 
 
-  // Output both errors and warnings
-  display: ['${ERRORS}', '${WARNINGS}'],
+  // Output ${display.split(', ').join(' and ')}
+  display: [${display}],
 
-  // If errors occur let the CLI exit with an error exit code
+  // If ${failOn
+    .split(', ')
+    .join(' or ')} occur let the CLI exit with an error exit code
   // This will stop your build in a CI and prevent a broken site
   // from being deployed.
-  failOn: ['${ERRORS}'], 
+  failOn: [${failOn}], 
 }`
 
     const outputPath = path.join(process.cwd(), 'staticlint.config.mjs')
