@@ -115,7 +115,10 @@ prog
   .command('scaffold', '')
   .describe('Builds an empty config file')
   .action(async () => {
-    const rules = buildRulesFromConfig(defaultConfig).map((r) => r.name)
+    const rules = buildRulesFromConfig(defaultConfig).map((r) => {
+      const spaces = Array.from({ length: 30 - r.name.length }).join(' ')
+      return { name: `${r.name}${spaces}(${r.description})`, value: r.name }
+    })
 
     const answers = await inquirer.prompt([
       {
@@ -129,7 +132,11 @@ prog
         name: 'rulesToInclude',
         type: 'checkbox',
         message: 'Which rules do you want to include? (defaults to all rules)',
-        choices: rules.map((r) => ({ name: r, checked: true })),
+        choices: rules.map((r) => ({
+          name: r.name,
+          value: r.value,
+          checked: true,
+        })),
       },
       {
         name: 'display',
@@ -164,8 +171,8 @@ prog
     ])
 
     const rulesToIgnore = rules
-      .filter((r) => !answers.rulesToInclude.includes(r))
-      .map((r) => `'${r}'`)
+      .filter((r) => !answers.rulesToInclude.includes(r.value))
+      .map((r) => `'${r.value}'`)
       .join(', ')
 
     const display = answers.display.map((d) => `'${d}'`).join(', ')
