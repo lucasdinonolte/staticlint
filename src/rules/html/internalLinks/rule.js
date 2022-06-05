@@ -2,14 +2,20 @@ import assert from 'assert'
 
 export default {
   name: 'html.internalLinks',
-  descriptions: 'Checks if internal links are well formated',
+  description: 'Checks if internal links are well formated',
   html: (payload, { lint, test, config }) => {
-    const internal = payload.aTags.filter((l) => (l.href.includes(config.host) || !l.href.includes('http')))
+    const internal = payload.aTags
+      .filter((l) => l.href.includes(config.host) || !l.href.includes('http'))
       .map((l) => {
         if (l.href.includes('#')) l.href = l.href.split('#')[0]
         return l
       })
-      .filter((l) => !l.href.includes('mailto') && !l.href.includes('tel:') && l.href.length > 0)
+      .filter(
+        (l) =>
+          !l.href.includes('mailto') &&
+          !l.href.includes('tel:') &&
+          l.href.length > 0,
+      )
 
     if (internal.length === 0) return
 
