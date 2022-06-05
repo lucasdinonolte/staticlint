@@ -2,6 +2,15 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+- feat: improve developer experience of scaffold command by adding an interactive prompt
+
+### Fixed
+- fix: read staticlint version from package.json
+- fix: add descriptions for all rules
+
 ## 0.2.0
 
 ### Added
