@@ -1,26 +1,46 @@
 import path from 'path'
 import fs from 'fs'
+import merge from 'lodash.merge'
+import glob from 'glob'
+import debug from 'debug'
 
 import { defaultConfig } from './defaultConfig.js'
 
-const _loadExternalConfiguration = async (externalConfig = null) => {
-  if (!externalConfig) return {}
+const _searchExternalConfiguration = () => {
+  const configFiles = glob.sync(
+    path.join(process.cwd(), 'staticlint.config.{js,mjs}'),
+  )
 
-  const configPath = path.join(process.cwd(), externalConfig)
-
-  if (!!configPath && !fs.existsSync(configPath))
-    throw new Error(`Configuration not found at ${configPath}`)
-
-  const loadedConfig = await import(configPath)
-  return Object.assign({}, loadedConfig.default)
+  return configFiles[0] || null
 }
 
-const mergeConfigurations = async (
-  externalConfig = 'staticlint.config.mjs',
-) => {
-  const config = Object.assign(
+const _loadExternalConfiguration = async (externalConfig = null) => {
+  debug('staticlint:configuration')(
+    `Loading external configuration from ${externalConfig}`,
+  )
+
+  if (!externalConfig) {
+    console.log('No external config found. Using default config\n')
+  }
+
+  let config = {}
+
+  if (!!externalConfig && fs.existsSync(externalConfig)) {
+    const loadedConfig = await import(externalConfig)
+    config = Object.assign({}, loadedConfig.default)
+  }
+
+  return config
+}
+
+const mergeConfigurations = async (externalConfig) => {
+  const externalConfigToUse = externalConfig
+    ? externalConfig
+    : _searchExternalConfiguration()
+
+  const config = merge(
     defaultConfig,
-    await _loadExternalConfiguration(externalConfig),
+    await _loadExternalConfiguration(externalConfigToUse),
   )
 
   // Check if config.rules is a non-empty object

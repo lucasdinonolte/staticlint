@@ -1,5 +1,5 @@
 import { parseHtml } from './util/html.js'
-import { ERROR, WARNING } from './constants.js'
+import { ERROR } from './constants.js'
 
 /**
  * Factory function returning a function to run a set of rules on

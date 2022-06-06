@@ -29,7 +29,7 @@ const prog = sade('staticlint').version(pkg.version)
 prog
   .command('check <dir>', '', { default: true })
   .describe('Checks the output of a SSG for common issues.')
-  .option('--config', 'Path to custom config file', 'staticlint.config.js')
+  .option('--config', 'Path to custom config file')
   .option(
     '--host',
     'Production URL. If set it overrides the host set in your config file',
@@ -104,7 +104,9 @@ prog
   .option('--config', 'Path to custom config file', 'staticlint.config.mjs')
   .action(async (opts) => {
     const config = await mergeConfigurations(opts.config)
-    const rules = buildRulesFromConfig(config).map((r) => r.name)
+    const rules = buildRulesFromConfig(config).map(
+      (r) => `${r.name} (${r.severity})`,
+    )
     console.log(
       'The current configuration will run staticlint with the following rules\n',
     )
@@ -172,8 +174,8 @@ prog
 
     const rulesToIgnore = rules
       .filter((r) => !answers.rulesToInclude.includes(r.value))
-      .map((r) => `'${r.value}'`)
-      .join(', ')
+      .map((r) => `'${r.value}': false,`)
+      .join('\n    ')
 
     const display = answers.display.map((d) => `'${d}'`).join(', ')
     const failOn = answers.failOn.map((f) => `'${f}'`).join(', ')
@@ -187,9 +189,11 @@ prog
   // accepts glob paths
   ignoreFiles: [],
 
-  // Rules to ignore
-  ignoreRules: [${rulesToIgnore}], 
-
+  // Rules
+  rules: {
+    ${rulesToIgnore}
+  },
+  
   // Create custom rules
   customRules: [], 
 

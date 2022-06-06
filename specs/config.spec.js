@@ -7,6 +7,12 @@ describe('Configuration', () => {
     expect(await mergeConfigurations(null)).toStrictEqual(defaultConfig)
   })
 
+  it('should return the default config if non exisiting external config is provided', async () => {
+    expect(
+      await mergeConfigurations('./specs/fixtures/non-existing.config.js'),
+    ).toStrictEqual(defaultConfig)
+  })
+
   it('should override default config with external config', async () => {
     expect(
       await mergeConfigurations('./specs/fixtures/empty.config.js'),
@@ -19,12 +25,6 @@ describe('Configuration', () => {
       display: [],
       failOn: [],
     })
-  })
-
-  it('should fail if non-existing config is given', async () => {
-    await expect(
-      mergeConfigurations('./specs/fixtures/non-existing.config.js'),
-    ).rejects.toThrowError('Configuration not found at')
   })
 
   it('should fail if a non-valid config is given', async () => {

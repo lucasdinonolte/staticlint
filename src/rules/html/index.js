@@ -7,6 +7,7 @@ import linkText from './linkText/rule.js'
 import maxOutboundLinks from './maxOutboundLinks/rule.js'
 import metaDescription from './metaDescription/rule.js'
 import metaViewport from './metaViewport/rule.js'
+import missingImages from './missingImages/rule.js'
 import noVideo from './noVideo/rule.js'
 import tabIndex from './tabindex/rule.js'
 import title from './title/rule.js'
@@ -21,6 +22,7 @@ export default [
   maxOutboundLinks,
   metaDescription,
   metaViewport,
+  missingImages,
   noVideo,
   title,
   tabIndex,
