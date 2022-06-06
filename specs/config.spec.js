@@ -15,9 +15,21 @@ describe('Configuration', () => {
       ignoreFiles: [],
       ignoreRules: [],
       customRules: [],
-      rules: [],
+      rules: {},
       display: [],
       failOn: [],
     })
+  })
+
+  it('should fail if non-existing config is given', async () => {
+    await expect(
+      mergeConfigurations('./specs/fixtures/non-existing.config.js'),
+    ).rejects.toThrowError('Configuration not found at')
+  })
+
+  it('should fail if a non-valid config is given', async () => {
+    await expect(
+      mergeConfigurations('./specs/fixtures/faulty.config.js'),
+    ).rejects.toThrowError('Invalid configuration')
   })
 })

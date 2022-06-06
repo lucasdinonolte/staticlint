@@ -5,6 +5,7 @@ import groupBy from 'lodash.groupby'
 import memoize from 'lodash.memoize'
 
 import { testFolder, testHtmlFile, testFile } from './tester.js'
+import { getRuleByName } from './rules.js'
 import { defaultConfig } from './defaultConfig.js'
 import { ERRORS, WARNINGS } from './constants.js'
 
@@ -26,9 +27,15 @@ const Cache = {
 // Util to build rules from a given config
 export const buildRulesFromConfig = (config, ruleType = null) => {
   return [
-    config.rules.filter((r) =>
-      ruleType !== null ? typeof r[ruleType] === 'function' : true,
-    ),
+    Object.keys(config.rules)
+      .filter((r) => {
+        const rule = getRuleByName(r)
+        return ruleType !== null ? typeof rule[ruleType] === 'function' : true
+      })
+      .map((r) => ({
+        severity: config.rules[r],
+        ...getRuleByName(r),
+      })),
     config.customRules.filter((r) =>
       ruleType !== null ? typeof r[ruleType] === 'function' : true,
     ),

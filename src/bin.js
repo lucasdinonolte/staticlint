@@ -29,7 +29,7 @@ const prog = sade('staticlint').version(pkg.version)
 prog
   .command('check <dir>', '', { default: true })
   .describe('Checks the output of a SSG for common issues.')
-  .option('--config', 'Path to custom config file', 'staticlint.config.mjs')
+  .option('--config', 'Path to custom config file', 'staticlint.config.js')
   .option(
     '--host',
     'Production URL. If set it overrides the host set in your config file',
@@ -71,7 +71,7 @@ prog
     console.log(
       chalk.bold('Rules'),
       '      ',
-      chalk.white(config.rules.length + config.customRules.length),
+      chalk.white(Object.keys(config.rules).length + config.customRules.length),
     )
     console.log(
       chalk.bold('Time'),
