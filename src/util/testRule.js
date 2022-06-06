@@ -35,6 +35,7 @@ const runTestForRule = async (
   return {
     errors: errors[rule.name] || [],
     warnings: warnings[rule.name] || [],
+    all: [errors[rule.name] || [], warnings[rule.name] || []].flat(),
   }
 }
 

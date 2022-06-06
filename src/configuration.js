@@ -11,6 +11,12 @@ const _searchExternalConfiguration = () => {
     path.join(process.cwd(), 'staticlint.config.{js,mjs}'),
   )
 
+  if (configFiles.length > 1) {
+    console.log(
+      `Multiple config files found. Using ${configFiles[0]}. You can specify to use another config file using the --config flag.`,
+    )
+  }
+
   return configFiles[0] || null
 }
 
@@ -33,7 +39,7 @@ const _loadExternalConfiguration = async (externalConfig = null) => {
   return config
 }
 
-const mergeConfigurations = async (externalConfig) => {
+const mergeConfigurations = async (externalConfig = null) => {
   const externalConfigToUse = externalConfig
     ? externalConfig
     : _searchExternalConfiguration()

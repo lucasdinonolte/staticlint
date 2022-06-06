@@ -44,17 +44,21 @@ const testFactory = ({ prepareInput, ruleRunner }) => {
     for (let i = 0; i < rules.length; i++) {
       const rule = rules[i]
       const severity = rule.severity || ERROR
-      const test = makeTestRunner(
-        rule.name,
-        severity === ERROR ? errors : warnings,
-      )
-      const lint = makeTestRunner(rule.name, warnings)
+      const produceError = makeTestRunner(rule.name, errors)
+      const produceWarning = makeTestRunner(rule.name, warnings)
+
       await ruleRunner.call(null, {
         depsForRule,
         rule,
         dependencies,
-        test,
-        lint,
+        test: severity === ERROR ? produceError : produceWarning,
+        // Deprecated
+        lint: (...args) => {
+          console.log(
+            'Warning: Calling `lint` directly is deprecated. Use `test` instead.',
+          )
+          produceWarning(...args)
+        },
         input: preparedInput,
       })
     }

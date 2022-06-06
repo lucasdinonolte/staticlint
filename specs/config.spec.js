@@ -18,12 +18,7 @@ describe('Configuration', () => {
       await mergeConfigurations('./specs/fixtures/empty.config.js'),
     ).toStrictEqual({
       host: 'https://spec-host.com/',
-      ignoreFiles: [],
-      ignoreRules: [],
-      customRules: [],
-      rules: {},
-      display: [],
-      failOn: [],
+      ...defaultConfig,
     })
   })
 
