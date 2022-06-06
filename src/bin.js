@@ -204,7 +204,19 @@ prog
   failOn: [${failOn}], 
 }`
 
-    const outputPath = path.join(process.cwd(), 'staticlint.config.mjs')
+    // Determine if we're in a module scope or commonjs scope and
+    // set the file extension accordingly
+    const resolveFileExtension = (rootPath) => {
+      if (!fs.existsSync(path.join(rootPath, 'package.json'))) return 'mjs'
+
+      const pkg = JSON.parse(
+        fs.readFileSync(path.join(rootPath, 'package.json')),
+      )
+      return pkg.type === 'module' ? 'js' : 'mjs'
+    }
+
+    const outName = `staticlint.config.${resolveFileExtension(process.cwd())}`
+    const outputPath = path.join(process.cwd(), outName)
     fs.writeFileSync(outputPath, template, { encoding: 'utf-8' })
 
     console.log(`Written config to ${outputPath}`)
