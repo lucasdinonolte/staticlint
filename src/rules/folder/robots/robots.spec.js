@@ -23,7 +23,7 @@ describe('folder.robots', () => {
 
     expect(deps.path.join).toHaveBeenCalledWith('/folder', 'robots.txt')
     expect(deps.fs.existsSync).toHaveBeenCalledWith('/folder/robots.txt')
-    expect(results.warnings.length).toBe(1)
-    expect(results.warnings[0]).toBe('No robots.txt found')
+    expect(results.length).toBe(1)
+    expect(results[0]).toBe('No robots.txt found')
   })
 })

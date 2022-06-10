@@ -7,17 +7,24 @@ describe('Configuration', () => {
     expect(await mergeConfigurations(null)).toStrictEqual(defaultConfig)
   })
 
+  it('should return the default config if non exisiting external config is provided', async () => {
+    expect(
+      await mergeConfigurations('./specs/fixtures/non-existing.config.js'),
+    ).toStrictEqual(defaultConfig)
+  })
+
   it('should override default config with external config', async () => {
     expect(
       await mergeConfigurations('./specs/fixtures/empty.config.js'),
     ).toStrictEqual({
       host: 'https://spec-host.com/',
-      ignoreFiles: [],
-      ignoreRules: [],
-      customRules: [],
-      rules: [],
-      display: [],
-      failOn: [],
+      ...defaultConfig,
     })
+  })
+
+  it('should fail if a non-valid config is given', async () => {
+    await expect(
+      mergeConfigurations('./specs/fixtures/faulty.config.js'),
+    ).rejects.toThrowError('Invalid configuration')
   })
 })

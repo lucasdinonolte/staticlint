@@ -13,6 +13,7 @@ import performTests, { buildRulesFromConfig } from './index.js'
 import { mergeConfigurations } from './configuration.js'
 import { defaultConfig } from './defaultConfig.js'
 import { ERRORS, WARNINGS, ICONS } from './constants.js'
+import { allRules } from './rules.js'
 
 const stylings = {
   errors: chalk.red,
@@ -29,7 +30,7 @@ const prog = sade('staticlint').version(pkg.version)
 prog
   .command('check <dir>', '', { default: true })
   .describe('Checks the output of a SSG for common issues.')
-  .option('--config', 'Path to custom config file', 'staticlint.config.mjs')
+  .option('--config', 'Path to custom config file')
   .option(
     '--host',
     'Production URL. If set it overrides the host set in your config file',
@@ -71,7 +72,7 @@ prog
     console.log(
       chalk.bold('Rules'),
       '      ',
-      chalk.white(config.rules.length + config.customRules.length),
+      chalk.white(Object.keys(config.rules).length + config.customRules.length),
     )
     console.log(
       chalk.bold('Time'),
@@ -104,7 +105,9 @@ prog
   .option('--config', 'Path to custom config file', 'staticlint.config.mjs')
   .action(async (opts) => {
     const config = await mergeConfigurations(opts.config)
-    const rules = buildRulesFromConfig(config).map((r) => r.name)
+    const rules = buildRulesFromConfig(config).map(
+      (r) => `${r.name} (${r.severity})`,
+    )
     console.log(
       'The current configuration will run staticlint with the following rules\n',
     )
@@ -112,10 +115,21 @@ prog
   })
 
 prog
+  .command('allRules', '')
+  .describe('Lists all the rulese that are available in staticlint')
+  .action(() => {
+    console.log('The following rules are available in staticlint\n')
+    console.log(allRules.map((r) => `${r.name}`).join('\n'))
+  })
+
+prog
   .command('scaffold', '')
   .describe('Builds an empty config file')
   .action(async () => {
-    const rules = buildRulesFromConfig(defaultConfig).map((r) => r.name)
+    const rules = buildRulesFromConfig(defaultConfig).map((r) => {
+      const spaces = Array.from({ length: 40 - r.name.length }).join(' ')
+      return { name: `${r.name}${spaces}(${r.description})`, value: r.name }
+    })
 
     const answers = await inquirer.prompt([
       {
@@ -129,7 +143,11 @@ prog
         name: 'rulesToInclude',
         type: 'checkbox',
         message: 'Which rules do you want to include? (defaults to all rules)',
-        choices: rules.map((r) => ({ name: r, checked: true })),
+        choices: rules.map((r) => ({
+          name: r.name,
+          value: r.value,
+          checked: true,
+        })),
       },
       {
         name: 'display',
@@ -164,9 +182,9 @@ prog
     ])
 
     const rulesToIgnore = rules
-      .filter((r) => !answers.rulesToInclude.includes(r))
-      .map((r) => `'${r}'`)
-      .join(', ')
+      .filter((r) => !answers.rulesToInclude.includes(r.value))
+      .map((r) => `'${r.value}': false,`)
+      .join('\n    ')
 
     const display = answers.display.map((d) => `'${d}'`).join(', ')
     const failOn = answers.failOn.map((f) => `'${f}'`).join(', ')
@@ -180,9 +198,11 @@ prog
   // accepts glob paths
   ignoreFiles: [],
 
-  // Rules to ignore
-  ignoreRules: [${rulesToIgnore}], 
-
+  // Rules
+  rules: {
+    ${rulesToIgnore}
+  },
+  
   // Create custom rules
   customRules: [], 
 
@@ -197,7 +217,19 @@ prog
   failOn: [${failOn}], 
 }`
 
-    const outputPath = path.join(process.cwd(), 'staticlint.config.mjs')
+    // Determine if we're in a module scope or commonjs scope and
+    // set the file extension accordingly
+    const resolveFileExtension = (rootPath) => {
+      if (!fs.existsSync(path.join(rootPath, 'package.json'))) return 'mjs'
+
+      const pkg = JSON.parse(
+        fs.readFileSync(path.join(rootPath, 'package.json')),
+      )
+      return pkg.type === 'module' ? 'js' : 'mjs'
+    }
+
+    const outName = `staticlint.config.${resolveFileExtension(process.cwd())}`
+    const outputPath = path.join(process.cwd(), outName)
     fs.writeFileSync(outputPath, template, { encoding: 'utf-8' })
 
     console.log(`Written config to ${outputPath}`)

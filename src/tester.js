@@ -1,5 +1,10 @@
 import { parseHtml } from './util/html.js'
+import { ERROR } from './constants.js'
 
+/**
+ * Factory function returning a function to run a set of rules on
+ * a given input (folder, files or html documents).
+ */
 const testFactory = ({ prepareInput, ruleRunner }) => {
   if (typeof ruleRunner !== 'function') {
     throw new Error('Rule runner must be a function')
@@ -8,6 +13,9 @@ const testFactory = ({ prepareInput, ruleRunner }) => {
   /**
    * Factory function to make a test runner that logs
    * depending on its severity.
+   *
+   * This has side effects, as it's mutating the value of externally given
+   * variables containing the errors or warnings.
    *
    * @param name of the rule
    * @param severity to log to
@@ -35,14 +43,22 @@ const testFactory = ({ prepareInput, ruleRunner }) => {
 
     for (let i = 0; i < rules.length; i++) {
       const rule = rules[i]
-      const test = makeTestRunner(rule.name, errors)
-      const lint = makeTestRunner(rule.name, warnings)
+      const severity = rule.severity || ERROR
+      const produceError = makeTestRunner(rule.name, errors)
+      const produceWarning = makeTestRunner(rule.name, warnings)
+
       await ruleRunner.call(null, {
         depsForRule,
         rule,
         dependencies,
-        test,
-        lint,
+        test: severity === ERROR ? produceError : produceWarning,
+        // Deprecated
+        lint: (...args) => {
+          console.log(
+            'Warning: Calling `lint` directly is deprecated. Use `test` instead.',
+          )
+          produceWarning(...args)
+        },
         input: preparedInput,
       })
     }

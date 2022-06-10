@@ -32,10 +32,7 @@ const runTestForRule = async (
     deps,
   )
 
-  return {
-    errors: errors[rule.name] || [],
-    warnings: warnings[rule.name] || [],
-  }
+  return [errors[rule.name] || [], warnings[rule.name] || []].flat()
 }
 
 export default runTestForRule

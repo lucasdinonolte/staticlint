@@ -5,8 +5,9 @@ import groupBy from 'lodash.groupby'
 import memoize from 'lodash.memoize'
 
 import { testFolder, testHtmlFile, testFile } from './tester.js'
+import { getRuleByName } from './rules.js'
 import { defaultConfig } from './defaultConfig.js'
-import { ERRORS, WARNINGS } from './constants.js'
+import { ERRORS, WARNINGS, ERROR } from './constants.js'
 
 const Cache = {
   entries: {},
@@ -26,15 +27,21 @@ const Cache = {
 // Util to build rules from a given config
 export const buildRulesFromConfig = (config, ruleType = null) => {
   return [
-    config.rules.filter((r) =>
-      ruleType !== null ? typeof r[ruleType] === 'function' : true,
-    ),
+    Object.keys(config.rules)
+      .filter((r) => {
+        const rule = getRuleByName(r)
+        // Filter out rules with severity set to false
+        if (!config.rules[r]) return false
+        return ruleType !== null ? typeof rule[ruleType] === 'function' : true
+      })
+      .map((r) => ({
+        severity: config.rules[r] || ERROR,
+        ...getRuleByName(r),
+      })),
     config.customRules.filter((r) =>
       ruleType !== null ? typeof r[ruleType] === 'function' : true,
     ),
-  ]
-    .flat()
-    .filter((r) => !config.ignoreRules.includes(r.name))
+  ].flat()
 }
 
 // Util to resolve ignored files glob (memoized for speed)

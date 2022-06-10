@@ -1,15 +1,43 @@
-import htmlRules from './rules/html/index.js'
-import seoRules from './rules/seo/index.js'
-import folderRules from './rules/folder/index.js'
-import fileRules from './rules/files/index.js'
-import { ERRORS, WARNINGS } from './constants.js'
+import { ERRORS, WARNINGS, ERROR, WARNING } from './constants.js'
 
 export const defaultConfig = {
   host: null,
   ignoreFiles: [],
-  ignoreRules: [],
   customRules: [],
-  rules: [folderRules, htmlRules, seoRules, fileRules].flat(),
+  rules: {
+    'html.brokenLinks': ERROR,
+    'html.favicon': ERROR,
+    'html.img.alt.present': ERROR,
+    'html.img.alt.notEmpty': WARNING,
+    'html.internalLinks.lowercase': ERROR,
+    'html.internalLinks.noFollow': ERROR,
+    'html.internalLinks.trailingSlash': ERROR,
+    'html.lang': ERROR,
+    'html.linkText': ERROR,
+    'html.maxOutboundLinks': WARNING,
+    'html.meta.description.present': ERROR,
+    'html.meta.description.maxLength': ERROR,
+    'html.meta.description.idealLength': ERROR,
+    'html.meta.description.title': ERROR,
+    'html.meta.viewport': ERROR,
+    'html.missingImages': ERROR,
+    'html.noVideo': WARNING,
+    'html.tabindex': WARNING,
+    'html.title.present': ERROR,
+    'html.title.idealLength': ERROR,
+    'html.title.maxLength': ERROR,
+    'html.title.stopWords': ERROR,
+    'seo.canonical': ERROR,
+    'seo.headings.hasH1': ERROR,
+    'seo.headings.notEmpty': ERROR,
+    'seo.headings.idealLength': ERROR,
+    'seo.headings.levels': ERROR,
+    'seo.uniqueTitle': ERROR,
+    'folder.htaccess': ERROR,
+    'folder.robots': ERROR,
+    'folder.sitemap': ERROR,
+    'file.maxImageSize': ERROR,
+  },
   display: [ERRORS, WARNINGS],
   failOn: [ERRORS],
 }

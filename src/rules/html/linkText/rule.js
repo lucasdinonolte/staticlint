@@ -1,7 +1,7 @@
 import assert from 'assert'
 
 export default {
-  name: 'html.linkText^',
+  name: 'html.linkText',
   description: 'Validates that all links have discernable text',
   html: (payload, { test }) => {
     payload.aTags.forEach((a) => {

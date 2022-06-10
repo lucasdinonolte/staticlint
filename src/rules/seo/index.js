@@ -1,9 +1,17 @@
 import canonical from './canonical/rule.js'
-import headings from './headings/rule.js'
+import {
+  headingsHasH1,
+  headingNotEmpty,
+  headingsIdealLength,
+  headingsLevels,
+} from './headings/rule.js'
 import uniqueTitle from './uniqueTitle/rule.js'
 
-export default [ 
+export default [
   canonical,
-  headings,
+  headingsHasH1,
+  headingNotEmpty,
+  headingsIdealLength,
+  headingsLevels,
   uniqueTitle,
 ]

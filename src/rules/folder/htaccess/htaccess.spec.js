@@ -23,7 +23,7 @@ describe('folder.htaccess', () => {
 
     expect(deps.path.join).toHaveBeenCalledWith('/folder', '.htaccess')
     expect(deps.fs.existsSync).toHaveBeenCalledWith('/folder/.htaccess')
-    expect(results.warnings.length).toBe(1)
-    expect(results.warnings[0]).toBe('No .htaccess found')
+    expect(results.length).toBe(1)
+    expect(results[0]).toBe('No .htaccess found')
   })
 })

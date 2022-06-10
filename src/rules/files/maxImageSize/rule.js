@@ -10,10 +10,10 @@ export default {
   name: 'file.maxImageSize',
   description: 'Warns if included images are above 500kb in size',
   files: '**/*.{jpg,jpeg,png,gif,webp}',
-  file: (file, { lint }) => {
+  file: (file, { test }) => {
     const size = fileSizeInKilobytes(file)
 
-    lint(
+    test(
       assert.ok,
       size < 500,
       `This image is pretty big (${Math.round(size * 100) / 100} kb).`,
