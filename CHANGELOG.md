@@ -2,6 +2,10 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.2.1
+### Fixed
+- fix: turn lodash.memoize into a dependency
+
 ## 0.2.0
 
 ### Added
