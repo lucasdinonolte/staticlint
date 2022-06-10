@@ -9,6 +9,11 @@ via NPM
 $ npm install staticlint
 ```
 
+### 1.1 …or use the bleeding edge version if you dare
+```bash
+$ npm install staticlint@next
+```
+
 ### 2. Add a script to `package.json`
 ```json
 "test": "staticlint BUILD_FOLDER --config=./staticlint.config.mjs",
