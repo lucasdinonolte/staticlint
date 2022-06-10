@@ -11,6 +11,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - fix: read staticlint version from package.json
 - fix: add descriptions for all rules
 
+## 0.2.1
+
+### Fixed
+- fix: turn lodash.memoize into a dependency
+
 ## 0.2.0
 
 ### Added
