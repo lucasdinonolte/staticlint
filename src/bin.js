@@ -13,6 +13,7 @@ import performTests, { buildRulesFromConfig } from './index.js'
 import { mergeConfigurations } from './configuration.js'
 import { defaultConfig } from './defaultConfig.js'
 import { ERRORS, WARNINGS, ICONS } from './constants.js'
+import { allRules } from './rules.js'
 
 const stylings = {
   errors: chalk.red,
@@ -114,11 +115,19 @@ prog
   })
 
 prog
+  .command('allRules', '')
+  .describe('Lists all the rulese that are available in staticlint')
+  .action(() => {
+    console.log('The following rules are available in staticlint\n')
+    console.log(allRules.map((r) => `${r.name}`).join('\n'))
+  })
+
+prog
   .command('scaffold', '')
   .describe('Builds an empty config file')
   .action(async () => {
     const rules = buildRulesFromConfig(defaultConfig).map((r) => {
-      const spaces = Array.from({ length: 30 - r.name.length }).join(' ')
+      const spaces = Array.from({ length: 40 - r.name.length }).join(' ')
       return { name: `${r.name}${spaces}(${r.description})`, value: r.name }
     })
 

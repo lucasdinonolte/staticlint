@@ -1,11 +1,13 @@
 import assert from 'assert'
 import { cleanString } from '../../../util/string.js'
 
-export default {
-  name: 'html.meta.description',
+export const metaDescriptionPresent = {
+  name: 'html.meta.description.present',
   description: 'Validates presence of meta description',
-  html: (payload, { test, lint }) => {
-    const metas = payload.meta.filter((m) => m.name && m.name.toLowerCase() === 'description')
+  html: (payload, { test }) => {
+    const metas = payload.meta.filter(
+      (m) => m.name && m.name.toLowerCase() === 'description',
+    )
 
     test(
       assert.strictEqual,
@@ -30,17 +32,15 @@ export default {
       0,
       'Meta description should not be empty',
     )
+  },
+}
 
-    lint(
-      assert.ok,
-      metas[0].content.length > 10,
-      `This meta description is shorter than the recommended minimum limit of 10. (${metas[0].content})`,
-    )
-
-    lint(
-      assert.ok,
-      metas[0].content.length < 120,
-      `This meta description is longer than the recommended limit of 120. ${metas[0].content.length} (${metas[0].content})`,
+export const metaDescriptionMaxLength = {
+  name: 'html.meta.description.maxLength',
+  description: 'Validates the ideal length of a meta description',
+  html: (payload, { test }) => {
+    const metas = payload.meta.filter(
+      (m) => m.name && m.name.toLowerCase() === 'description',
     )
 
     test(
@@ -48,7 +48,38 @@ export default {
       metas[0].content.length < 300,
       `Investigate this meta description. Something could be wrong as it is over 300 chars: ${metas[0].content}`,
     )
+  },
+}
 
+export const metaDescriptionIdealLength = {
+  name: 'html.meta.description.idealLength',
+  description: 'Validates the ideal length of a meta description',
+  html: (payload, { test }) => {
+    const metas = payload.meta.filter(
+      (m) => m.name && m.name.toLowerCase() === 'description',
+    )
+
+    test(
+      assert.ok,
+      metas[0].content.length < 120,
+      `This meta description is longer than the recommended limit of 120. ${metas[0].content.length} (${metas[0].content})`,
+    )
+
+    test(
+      assert.ok,
+      metas[0].content.length > 10,
+      `This meta description is shorter than the recommended minimum limit of 10. (${metas[0].content})`,
+    )
+  },
+}
+
+export const metaDescriptionTitle = {
+  name: 'html.meta.description.title',
+  description: 'Validates the meta description contains a word from the title',
+  html: (payload, { test }) => {
+    const metas = payload.meta.filter(
+      (m) => m.name && m.name.toLowerCase() === 'description',
+    )
     if (payload.title[0]) {
       const titleArr = cleanString(payload.title[0].innerText)
         .split(' ')
@@ -60,7 +91,7 @@ export default {
 
       const matches = titleArr.filter((t) => compareArr.indexOf(t) !== -1)
 
-      lint(
+      test(
         assert.ok,
         matches.length >= 1,
         'Meta description should include at least 1 of the words in the title tag.',

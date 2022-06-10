@@ -3,7 +3,7 @@ import seoRules from './rules/seo/index.js'
 import folderRules from './rules/folder/index.js'
 import fileRules from './rules/files/index.js'
 
-const allRules = [htmlRules, seoRules, folderRules, fileRules].flat()
+export const allRules = [htmlRules, seoRules, folderRules, fileRules].flat()
 
 export const getRuleByName = (name) => {
   const rule = allRules.find((r) => r.name === name)

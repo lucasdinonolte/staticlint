@@ -1,9 +1,9 @@
 import assert from 'assert'
 
-export default {
-  name: 'html.title',
+export const titlePresent = {
+  name: 'html.title.present',
   description: 'Checks if a title tag is present',
-  html: (payload, { test, lint }) => {
+  html: (payload, { test }) => {
     const titles = payload.title
 
     // Test for presence of one and only one title tag
@@ -29,30 +29,64 @@ export default {
       0,
       'Title tag should not be empty',
     )
+  },
+}
 
-    lint(
+export const titleIdealLength = {
+  name: 'html.title.idealLength',
+  description: 'Checks if title tag is between 10 and 70 characters',
+  html: (payload, { test }) => {
+    const titles = payload.title
+
+    test(
       assert.ok,
       titles[0].innerText.length > 10,
-      'This title tag is shorter than the recommended minimum limit of 10.',  
+      'This title tag is shorter than the recommended minimum limit of 10.',
     )
 
-    lint(
+    test(
       assert.ok,
       titles[0].innerText.length < 70,
       'This title tag is longer than the recommended limit of 70.',
     )
+  },
+}
+
+export const titleMaxLength = {
+  name: 'html.title.maxLength',
+  description: 'Checks if title tag is not above 200 characters',
+  html: (payload, { test }) => {
+    const titles = payload.title
 
     test(
       assert.ok,
       titles[0].innerText.length < 200,
       `Something could be wrong this title tag is over 200 chars. : ${titles[0].innerText}`,
     )
+  },
+}
 
-    const stopWords = ['a', 'and', 'but', 'so', 'on', 'or', 'the', 'was', 'with']
+export const titleStopWords = {
+  name: 'html.title.stopWords',
+  description: 'Checks if the title contains any english stopwords',
+  html: (payload, { test }) => {
+    const titles = payload.title
+
+    const stopWords = [
+      'a',
+      'and',
+      'but',
+      'so',
+      'on',
+      'or',
+      'the',
+      'was',
+      'with',
+    ]
     stopWords.forEach((sw) => {
-      lint(
+      test(
         assert.ok,
-        !(titles[0].innerText.toLowerCase().includes(` ${sw} `)),
+        !titles[0].innerText.toLowerCase().includes(` ${sw} `),
         `Title tag includes stopword ${sw}`,
       )
     })

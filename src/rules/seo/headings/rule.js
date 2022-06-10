@@ -1,10 +1,10 @@
 import assert from 'assert'
 
-export default {
-  name: 'seo.headings',
-  description: 'Validates the proper use of headline tags',
-  html: (payload, { test, lint }) => {
-    const { h1s, h2s, h3s, h4s, h5s, h6s} = payload
+export const headingsHasH1 = {
+  name: 'seo.headings.hasH1',
+  description: 'Checks that there is one (and only one) h1 tag per page',
+  html: (payload, { test }) => {
+    const { h1s } = payload
 
     // There should be only one H1 tag
     // TODO: Research if this still is true from an SEO-standpoint
@@ -14,9 +14,16 @@ export default {
       1,
       `There should be 1 H1 tag. Found ${h1s.length}.`,
     )
+  },
+}
 
+export const headingNotEmpty = {
+  name: 'seo.headings.notEmpty',
+  description: 'Checks that heading tags are not empty',
+  html: (payload, { test }) => {
+    const { h1s, h2s, h3s, h4s, h5s, h6s } = payload
     // Lint heading levels
-    const lintHeadingLevel = (level, name, minLength = 10, maxLength = 70) => {
+    const testHeadingLevel = (level) => {
       level.forEach((heading) => {
         test(
           assert.notStrictEqual,
@@ -24,14 +31,33 @@ export default {
           0,
           'Headings should not be empty',
         )
+      })
+    }
 
-        lint(
+    testHeadingLevel(h1s, 'H1')
+    testHeadingLevel(h2s, 'H2')
+    testHeadingLevel(h3s, 'H3')
+    testHeadingLevel(h4s, 'H4')
+    testHeadingLevel(h5s, 'H5')
+    testHeadingLevel(h6s, 'H6')
+  },
+}
+
+export const headingsIdealLength = {
+  name: 'seo.headings.idealLength',
+  description: 'Checks headings for ideal text length',
+  html: (payload, { test }) => {
+    const { h1s, h2s, h3s, h4s, h5s, h6s } = payload
+    // Lint heading levels
+    const testHeadingLevel = (level, name, minLength = 10, maxLength = 70) => {
+      level.forEach((heading) => {
+        test(
           assert.ok,
           heading.innerText.length < maxLength,
           `${name} tag is longer than the recommended limit of ${maxLength}. (${heading.innerText})`,
         )
 
-        lint(
+        test(
           assert.ok,
           heading.innerText.length >= minLength,
           `${name} tag is shorter than the recommended limit of ${minLength}. (${heading.innerText})`,
@@ -39,20 +65,23 @@ export default {
       })
     }
 
-    lintHeadingLevel(h1s, 'H1')
-    lintHeadingLevel(h2s, 'H2', 7, 100)
-    lintHeadingLevel(h3s, 'H3', 7, 100)
-    lintHeadingLevel(h4s, 'H4', 7, 100)
-    lintHeadingLevel(h5s, 'H5', 7, 100)
-    lintHeadingLevel(h6s, 'H6', 7, 100)
+    testHeadingLevel(h1s, 'H1')
+    testHeadingLevel(h2s, 'H2', 7, 100)
+    testHeadingLevel(h3s, 'H3', 7, 100)
+    testHeadingLevel(h4s, 'H4', 7, 100)
+    testHeadingLevel(h5s, 'H5', 7, 100)
+    testHeadingLevel(h6s, 'H6', 7, 100)
+  },
+}
 
+export const headingsLevels = {
+  name: 'seo.headings.levels',
+  description: 'Checks that no heading level is skipped',
+  html: (payload, { test }) => {
+    const { h1s, h2s, h3s, h4s, h5s, h6s } = payload
     // Check that we do not skip heading levels
     const compareHeadingLevels = (a, b, msg) => {
-      lint(
-        assert.ok,
-        !(a.length > 0 && b.length === 0),
-        msg,
-      )
+      test(assert.ok, !(a.length > 0 && b.length === 0), msg)
     }
 
     compareHeadingLevels(h2s, h1s, 'There are h2 tags but no h1 tag')
