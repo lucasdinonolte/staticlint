@@ -14,9 +14,7 @@ describe('html.maxOutboundLinks', () => {
   it('should warn if there are more than 50 outbound links', async () => {
     let results = await runTestForRule(rule, links.join(''))
 
-    expect(results.all.length).toBe(1)
-    expect(results.all[0]).toBe(
-      'This page contains a lot of outbound links (51)',
-    )
+    expect(results.length).toBe(1)
+    expect(results[0]).toBe('This page contains a lot of outbound links (51)')
   })
 })

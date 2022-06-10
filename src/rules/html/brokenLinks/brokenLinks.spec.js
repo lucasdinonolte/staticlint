@@ -21,7 +21,7 @@ describe('html.brokenLinks', () => {
     )
 
     expect(urlExists).toHaveBeenCalledWith('http://broken-link.de')
-    expect(results.errors.length).toBe(1)
+    expect(results.length).toBe(1)
   })
 
   it('should not return an error for internal links', async () => {
@@ -35,6 +35,6 @@ describe('html.brokenLinks', () => {
     )
 
     expect(urlExists).not.toHaveBeenCalled()
-    expect(results.errors.length).toBe(0)
+    expect(results.length).toBe(0)
   })
 })

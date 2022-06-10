@@ -5,7 +5,7 @@ import runTestForRule from '../../../util/testRule.js'
 describe('img.alt.present', () => {
   it('should return an error if no alt attribute is set', async () => {
     let results = await runTestForRule(imgAltPresent, '<img src="foo.jpg" />')
-    expect(results.all.length).toBe(1)
+    expect(results.length).toBe(1)
   })
 })
 
@@ -15,6 +15,6 @@ describe('img.alt.notEmpty', () => {
       imgAltNotEmpty,
       '<img src="foo.jpg" alt="" />',
     )
-    expect(results.all.length).toBe(1)
+    expect(results.length).toBe(1)
   })
 })

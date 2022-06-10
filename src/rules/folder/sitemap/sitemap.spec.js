@@ -23,7 +23,7 @@ describe('folder.sitemap', () => {
 
     expect(deps.path.join).toHaveBeenCalledWith('/folder', 'sitemap.xml')
     expect(deps.fs.existsSync).toHaveBeenCalledWith('/folder/sitemap.xml')
-    expect(results.errors.length).toBe(1)
-    expect(results.errors[0]).toBe('No sitemap.xml found')
+    expect(results.length).toBe(1)
+    expect(results[0]).toBe('No sitemap.xml found')
   })
 })

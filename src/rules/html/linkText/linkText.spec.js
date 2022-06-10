@@ -8,7 +8,7 @@ describe('html.linkText', () => {
       rule,
       '<a href="/foo"><img src="/logo.png" alt="Our Logo" /></a>',
     )
-    expect(results.errors.length).toBe(1)
+    expect(results.length).toBe(1)
   })
 
   it('should return no error if link has text', async () => {
@@ -16,7 +16,7 @@ describe('html.linkText', () => {
       rule,
       '<a href="/test">I am a link with text</a>',
     )
-    expect(results.errors.length).toBe(0)
+    expect(results.length).toBe(0)
   })
 
   it('should return no error if link has text within nested tags', async () => {
@@ -24,7 +24,7 @@ describe('html.linkText', () => {
       rule,
       '<a href="/test"><div><img src="/logo.png" alt="My logo" /><span>I am a link with text<span></div></a>',
     )
-    expect(results.errors.length).toBe(0)
+    expect(results.length).toBe(0)
   })
 
   it('should return no error if link has aria-label', async () => {
@@ -32,7 +32,7 @@ describe('html.linkText', () => {
       rule,
       '<a href="/test" aria-label="Link to the homepage"><img src="/logo.png" alt="Our logo" /></a>',
     )
-    expect(results.errors.length).toBe(0)
+    expect(results.length).toBe(0)
   })
 
   it('should return error for empty aria label', async () => {
@@ -40,6 +40,6 @@ describe('html.linkText', () => {
       rule,
       '<a href="/test" aria-label=""><img src="/logo.png" alt="Our logo" /></a>',
     )
-    expect(results.errors.length).toBe(1)
+    expect(results.length).toBe(1)
   })
 })

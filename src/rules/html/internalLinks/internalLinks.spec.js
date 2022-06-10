@@ -6,32 +6,32 @@ import {
 } from './rule.js'
 import runTestForRule from '../../../util/testRule.js'
 
-describe('html.internalLinks.lowercase', () => {
+describe('html.interinks.lowercase', () => {
   it('should return an error for non lowercased internal links', async () => {
     let results = await runTestForRule(
       internalLinksLowercase,
-      '<a href="/internal/">Internal Link</a><a href="/INTERNalLink/">Another One</a>',
+      '<a href="/internal/">Internal Link</a><a href="/INTERink/">Another One</a>',
     )
-    expect(results.all.length).toBe(1)
+    expect(results.length).toBe(1)
   })
 })
 
-describe('html.internalLinks.trailingSlash', () => {
+describe('html.interinks.trailingSlash', () => {
   it('should return a warning for missing trailing slashes', async () => {
     let results = await runTestForRule(
       internalLinksTrailinsSlash,
-      '<a href="/hallo">Hallo</a><a href="/hello/">Hello</a>',
+      '<a href="/o">o</a><a href="/hello/">Hello</a>',
     )
-    expect(results.all.length).toBe(1)
+    expect(results.length).toBe(1)
   })
 })
 
-describe('html.internalLinks.noFollow', () => {
+describe('html.interinks.noFollow', () => {
   it('should return an error for internal links with nofollow rel attribute', async () => {
     let results = await runTestForRule(
       internalLinksNoFollow,
       '<a href="/internal/" rel="nofollow">Internal</a><a href="/correct-one/">No error for this one</a>',
     )
-    expect(results.all.length).toBe(1)
+    expect(results.length).toBe(1)
   })
 })

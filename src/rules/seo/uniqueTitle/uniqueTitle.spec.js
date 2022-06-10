@@ -25,8 +25,8 @@ describe('seo.uniqueTitle', () => {
     expect(cache.includes).toHaveBeenCalledWith('seo.uniqueTitle', takenValue)
     expect(cache.push).toHaveBeenCalled()
     expect(cache.push).toHaveBeenCalledWith('seo.uniqueTitle', takenValue)
-    expect(results.errors.length).toBe(1)
-    expect(results.errors[0]).toContain(`"${takenValue}"`)
+    expect(results.length).toBe(1)
+    expect(results[0]).toContain(`"${takenValue}"`)
   })
 
   it('should not return an error for a unique taken title', async () => {
@@ -40,6 +40,6 @@ describe('seo.uniqueTitle', () => {
     expect(cache.includes).toHaveBeenCalledWith('seo.uniqueTitle', freeValue)
     expect(cache.push).toHaveBeenCalled()
     expect(cache.push).toHaveBeenCalledWith('seo.uniqueTitle', freeValue)
-    expect(results.errors.length).toBe(0)
+    expect(results.length).toBe(0)
   })
 })
