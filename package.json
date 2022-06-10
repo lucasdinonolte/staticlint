@@ -36,6 +36,7 @@
     "glob": "^7.2.0",
     "inquirer": "^8.2.4",
     "lodash.groupby": "^4.6.0",
+    "lodash.memoize": "^4.1.2",
     "lodash.merge": "^4.6.2",
     "sade": "^1.8.1",
     "url-exists-nodejs": "^0.2.3"
@@ -47,7 +48,6 @@
     "c8": "^7.11.0",
     "eslint": "^8.8.0",
     "husky": "^7.0.4",
-    "lodash.memoize": "^4.1.2",
     "vitest": "^0.9.3"
   }
 }
