@@ -1,5 +1,7 @@
 import assert from 'assert'
 
+import { isValidUrl } from '../../../util/string.js'
+
 export default {
   name: 'seo.canonical',
   description: 'Validates the presence of a canonical tag',
@@ -19,6 +21,14 @@ export default {
       assert.ok,
       !!canonicals[0].href,
       'Canonical tag should have a href attribute',
+    )
+
+    if (!canonicals[0].href) return
+
+    test(
+      assert.ok,
+      isValidUrl(canonicals[0].href),
+      'Canonical tag should have a valid URL as href attribute. Got "${canonicals[0].href}"',
     )
 
     if (config.host) {

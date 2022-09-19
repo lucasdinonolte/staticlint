@@ -30,6 +30,17 @@ describe('seo.canonical', () => {
     expect(results[0]).toContain('Canonical tag should have a href attribute')
   })
 
+  it('Should return an error if canonical tag has an non-url href attribute', async () => {
+    let results = await runTestForRule(
+      rule,
+      '<link rel="canonical" href="this is not good" />',
+    )
+    expect(results.length).toBe(1)
+    expect(results[0]).toContain(
+      'Canonical tag should have a valid URL as href attribute',
+    )
+  })
+
   it('Should return an error if canonical tag href does not include the host given via config', async () => {
     let results = await runTestForRule(
       rule,

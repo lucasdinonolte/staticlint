@@ -9,6 +9,8 @@ import { getRuleByName } from './rules.js'
 import { defaultConfig } from './defaultConfig.js'
 import { ERRORS, WARNINGS, ERROR } from './constants.js'
 
+// The cache provides a way of persisting data between tests.
+// Check rultes/seo/uniqueTitle for an example using the cache.
 const Cache = {
   entries: {},
 
