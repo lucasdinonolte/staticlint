@@ -41,7 +41,7 @@ const _loadExternalConfiguration = async (externalConfig = null) => {
 
 const mergeConfigurations = async (externalConfig = null) => {
   const externalConfigToUse = externalConfig
-    ? externalConfig
+    ? path.join(process.cwd(), externalConfig)
     : _searchExternalConfiguration()
 
   const config = merge(
