@@ -43,6 +43,8 @@ export const metaDescriptionMaxLength = {
       (m) => m.name && m.name.toLowerCase() === 'description',
     )
 
+    if (metas.length !== 1) return
+
     test(
       assert.ok,
       metas[0].content.length < 300,
@@ -58,6 +60,8 @@ export const metaDescriptionIdealLength = {
     const metas = payload.meta.filter(
       (m) => m.name && m.name.toLowerCase() === 'description',
     )
+
+    if (metas.length !== 1) return
 
     test(
       assert.ok,
@@ -80,6 +84,9 @@ export const metaDescriptionTitle = {
     const metas = payload.meta.filter(
       (m) => m.name && m.name.toLowerCase() === 'description',
     )
+
+    if (metas.length !== 1) return
+
     if (payload.title[0]) {
       const titleArr = cleanString(payload.title[0].innerText)
         .split(' ')
