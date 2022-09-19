@@ -28,7 +28,7 @@ export default {
     test(
       assert.ok,
       isValidUrl(canonicals[0].href),
-      'Canonical tag should have a valid URL as href attribute. Got "${canonicals[0].href}"',
+      `Canonical tag should have a valid URL as href attribute. Got "${canonicals[0].href}"`,
     )
 
     if (config.host) {

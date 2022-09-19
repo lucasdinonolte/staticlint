@@ -6,6 +6,7 @@ import {
   headingsLevels,
 } from './headings/rule.js'
 import uniqueTitle from './uniqueTitle/rule.js'
+import uniqueCanonical from './uniqueCanonical/rule.js'
 
 export default [
   canonical,
@@ -14,4 +15,5 @@ export default [
   headingsIdealLength,
   headingsLevels,
   uniqueTitle,
+  uniqueCanonical,
 ]

@@ -19,6 +19,8 @@ describe('String Utils', () => {
       expect(isValidUrl('http://example.com/subpage/file.html')).toBe(true)
       expect(isValidUrl('https://example.com/subpage/file.html')).toBe(true)
 
+      expect(isValidUrl('https://designsystems.international/')).toBe(true)
+
       expect(
         isValidUrl('http://example.com/subpage/file.html?query=string&param=1'),
       ).toBe(true)

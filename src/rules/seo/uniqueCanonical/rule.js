@@ -1,6 +1,6 @@
 import assert from 'assert'
 
-const UNIQUE_CANONICAL_THRESHOLD = 10
+export const UNIQUE_CANONICAL_THRESHOLD = 10
 
 export default {
   name: 'seo.uniqueCanonical',
