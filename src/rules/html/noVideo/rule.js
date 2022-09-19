@@ -5,7 +5,8 @@ export default {
   description: 'Warns if self hosted video is found',
   html: (payload, { test, config }) => {
     const internal = payload.videos.filter(
-      (v) => v.src?.includes(config.host) || !v.src?.includes('http'),
+      (v) =>
+        !!v.src && (v.src?.includes(config.host) || !v.src?.includes('http')),
     )
 
     test(

@@ -44,6 +44,14 @@ describe('meta.description.present', () => {
 })
 
 describe('meta.description.maxLength', () => {
+  it('should do nothing if no meta description is found', async () => {
+    let results = await runTestForRule(
+      metaDescriptionMaxLength,
+      '<html><head></head></html>',
+    )
+    expect(results.length).toBe(0)
+  })
+
   it('should return an error if meta description content is too long', async () => {
     let results = await runTestForRule(
       metaDescriptionMaxLength,
@@ -56,7 +64,15 @@ describe('meta.description.maxLength', () => {
   })
 })
 
-describe('meta.description.idength', () => {
+describe('meta.description.idealLength', () => {
+  it('should do nothing if no meta description is found', async () => {
+    let results = await runTestForRule(
+      metaDescriptionIdealLength,
+      '<html><head></head></html>',
+    )
+    expect(results.length).toBe(0)
+  })
+
   it('should return a warning for meta description tag with content attribute with less than 10 characters', async () => {
     let results = await runTestForRule(
       metaDescriptionIdealLength,
@@ -81,6 +97,14 @@ describe('meta.description.idength', () => {
 })
 
 describe('meta.description.title', () => {
+  it('should do nothing if no meta description is found', async () => {
+    let results = await runTestForRule(
+      metaDescriptionTitle,
+      '<html><head></head></html>',
+    )
+    expect(results.length).toBe(0)
+  })
+
   it('should return a warning if meta description tag’s content attribute does not contain any of title words', async () => {
     let results = await runTestForRule(
       metaDescriptionTitle,
