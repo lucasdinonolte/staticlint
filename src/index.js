@@ -11,7 +11,7 @@ import { ERRORS, WARNINGS, ERROR } from './constants.js'
 
 // The cache provides a way of persisting data between tests.
 // Check rultes/seo/uniqueTitle for an example using the cache.
-const Cache = {
+export const Cache = {
   entries: {},
 
   push: function (name, value) {
@@ -23,6 +23,11 @@ const Cache = {
   includes: function (name, value) {
     if (!Object.prototype.hasOwnProperty.call(this.entries, name)) return false
     return this.entries[name].includes(value)
+  },
+
+  includesHowOften: function (name, value) {
+    if (!Object.prototype.hasOwnProperty.call(this.entries, name)) return 0
+    return this.entries[name].filter((v) => v === value).length
   },
 }
 

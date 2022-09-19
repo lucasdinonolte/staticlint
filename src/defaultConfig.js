@@ -33,6 +33,7 @@ export const defaultConfig = {
     'seo.headings.idealLength': ERROR,
     'seo.headings.levels': ERROR,
     'seo.uniqueTitle': ERROR,
+    'seo.uniqueCanonical': WARNING,
     'folder.htaccess': ERROR,
     'folder.robots': ERROR,
     'folder.sitemap': ERROR,
