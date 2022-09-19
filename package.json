@@ -22,7 +22,8 @@
     "prepare": "husky install",
     "changeset": "changeset",
     "version": "changeset version",
-    "publish": "changeset publish"
+    "publish": "changeset publish",
+    "create:rule": "node util/createRule.js"
   },
   "bin": {
     "staticlint": "src/bin.js"
