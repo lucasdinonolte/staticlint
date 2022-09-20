@@ -1,4 +1,5 @@
 import brokenLinks from './brokenLinks/rule.js'
+import { doctypePresent, doctypeHtml5 } from './doctype/rule.js'
 import favicon from './favicon/rule.js'
 import { imgAltPresent, imgAltNotEmpty } from './imgAlt/rule.js'
 import {
@@ -28,6 +29,8 @@ import {
 
 export default [
   brokenLinks,
+  doctypePresent,
+  doctypeHtml5,
   favicon,
   imgAltPresent,
   imgAltNotEmpty,

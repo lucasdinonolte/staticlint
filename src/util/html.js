@@ -38,37 +38,36 @@ const getAttributes = (html) => {
   }
 }
 
-const parseHtmlFactory = ({ fs, getAttributes }) => (file) => {
-  const html = fs.readFileSync(file, 'utf-8')
-  const $attributes = getAttributes(html)
+const parseHtmlFactory =
+  ({ fs, getAttributes }) =>
+  (file) => {
+    const html = fs.readFileSync(file, 'utf-8')
+    const $attributes = getAttributes(html)
 
-  return {
-    results: {
-      html: $attributes('html'),
-      title: $attributes('title'),
-      meta: $attributes('head meta'),
-      ldjson: $attributes('script[type="application/ld+json"]'),
-      h1s: $attributes('h1'),
-      h2s: $attributes('h2'),
-      h3s: $attributes('h3'),
-      h4s: $attributes('h4'),
-      h5s: $attributes('h5'),
-      h6s: $attributes('h6'),
-      canonical: $attributes('[rel="canonical"]'),
-      imgs: $attributes('img'),
-      videos: $attributes('video'),
-      aTags: $attributes('a'),
-      linkTags: $attributes('link'),
-      ps: $attributes('p'),
-    },
-    $attributes,
+    return {
+      results: {
+        source: html,
+        html: $attributes('html'),
+        title: $attributes('title'),
+        meta: $attributes('head meta'),
+        ldjson: $attributes('script[type="application/ld+json"]'),
+        h1s: $attributes('h1'),
+        h2s: $attributes('h2'),
+        h3s: $attributes('h3'),
+        h4s: $attributes('h4'),
+        h5s: $attributes('h5'),
+        h6s: $attributes('h6'),
+        canonical: $attributes('[rel="canonical"]'),
+        imgs: $attributes('img'),
+        videos: $attributes('video'),
+        aTags: $attributes('a'),
+        linkTags: $attributes('link'),
+        ps: $attributes('p'),
+      },
+      $attributes,
+    }
   }
-}
 
 const parseHtml = parseHtmlFactory({ fs, getAttributes })
 
-export {
-  getAttributes,
-  parseHtml,
-  parseHtmlFactory,
-}
+export { getAttributes, parseHtml, parseHtmlFactory }

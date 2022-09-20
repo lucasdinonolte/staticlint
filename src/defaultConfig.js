@@ -6,6 +6,8 @@ export const defaultConfig = {
   customRules: [],
   rules: {
     'html.brokenLinks': ERROR,
+    'html.doctype.present': ERROR,
+    'html.doctype.html5': WARNING,
     'html.favicon': ERROR,
     'html.img.alt.present': ERROR,
     'html.img.alt.notEmpty': WARNING,
