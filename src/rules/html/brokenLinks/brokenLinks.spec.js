@@ -3,10 +3,14 @@ import rule from './rule.js'
 import runTestForRule from '../../../util/testRule.js'
 
 describe('html.brokenLinks', () => {
-  let checkLink
+  let checkLink, cache
 
   beforeEach(() => {
     checkLink = vi.fn(async (url) => url)
+    cache = {
+      push: vi.fn(),
+      get: vi.fn(() => false),
+    }
   })
 
   it('should return an error for a missing external link', async () => {
@@ -16,7 +20,7 @@ describe('html.brokenLinks', () => {
       rule,
       '<a href="http://broken-link.de">Broken Link</a>',
       {},
-      {},
+      cache,
       { checkLink },
     )
 
@@ -30,7 +34,7 @@ describe('html.brokenLinks', () => {
       rule,
       '<a href="https://example.com/foo/">Foo</a> <a href="/foo/">Foo</a>',
       { host: 'https://example.com' },
-      {},
+      cache,
       { checkLink },
     )
 
