@@ -11,7 +11,7 @@ const checkLink = (link) => {
         resolve(res.statusCode)
       })
       .on('error', () => {
-        resolve('Domain could not be resolved')
+        resolve(false)
       })
   })
 }
@@ -37,7 +37,11 @@ export default {
         response = cache.get(cacheKey)
       }
 
-      test(assert.ok, response === 200, `Broken link: ${l.href} (${response})`)
+      test(
+        assert.ok,
+        typeof response === 'number' && response < 400,
+        `Broken link: ${l.href}`,
+      )
     }
   },
 }
