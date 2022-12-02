@@ -39,8 +39,9 @@
     "lodash.groupby": "^4.6.0",
     "lodash.memoize": "^4.1.2",
     "lodash.merge": "^4.6.2",
+    "log-update": "^5.0.1",
     "sade": "^1.8.1",
-    "url-exists-nodejs": "^0.2.3"
+    "url-exists-nodejs": "^0.2.4"
   },
   "devDependencies": {
     "@changesets/cli": "^2.22.0",

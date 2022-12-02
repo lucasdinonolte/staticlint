@@ -3,6 +3,7 @@ import path from 'path'
 import glob from 'glob'
 import groupBy from 'lodash.groupby'
 import memoize from 'lodash.memoize'
+import logUpdate from 'log-update'
 
 import { testFolder, testHtmlFile, testFile } from './tester.js'
 import { getRuleByName } from './rules.js'
@@ -23,6 +24,10 @@ export const Cache = {
   includes: function (name, value) {
     if (!Object.prototype.hasOwnProperty.call(this.entries, name)) return false
     return this.entries[name].includes(value)
+  },
+
+  set: function (name, value) {
+    this.entries[name] = value
   },
 
   get: function (name) {
@@ -92,7 +97,11 @@ export const buildErrorMessages = (file, messages, severity = 'error') => {
  * @param directory to check
  * @param staticlint configuration object
  */
-export default async function (dir, _config = {}) {
+export default async function (
+  dir,
+  _config = {},
+  { showProgress = false } = {},
+) {
   // Check if the target dir exists
   if (!fs.existsSync(dir)) throw new Error(`${dir} does not exist`)
 
@@ -121,6 +130,10 @@ export default async function (dir, _config = {}) {
 
     for (let i = 0; i < filesToTest.length; i++) {
       const file = filesToTest[i]
+
+      if (showProgress) {
+        logUpdate(`(${i + 1}/${filesToTest.length})\ttesting ${file}`)
+      }
 
       // Check if it's really a file and not a folder with a file extension
       if (!fs.lstatSync(file).isDirectory()) {

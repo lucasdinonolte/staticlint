@@ -8,7 +8,7 @@ describe('html.brokenLinks', () => {
   beforeEach(() => {
     checkLink = vi.fn(async (url) => url)
     cache = {
-      push: vi.fn(),
+      set: vi.fn(),
       get: vi.fn(() => false),
     }
   })

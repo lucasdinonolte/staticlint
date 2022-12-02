@@ -32,7 +32,7 @@ export default {
 
       if (!cache.get(cacheKey)) {
         response = await deps.checkLink(l.href)
-        cache.push(cacheKey, response)
+        cache.set(cacheKey, response)
       } else {
         response = cache.get(cacheKey)
       }

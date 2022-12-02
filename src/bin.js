@@ -46,7 +46,9 @@ prog
     if (opts.host) config.host = opts.host
 
     // Run the tests
-    const { errors, warnings } = await performTests(dir, config)
+    const { errors, warnings } = await performTests(dir, config, {
+      showProgress: true,
+    })
 
     // Output the errors and warnings
     const output = groupBy([errors, warnings].flat(), 'file')
