@@ -1,20 +1,43 @@
 import assert from 'assert'
-import urlExists from 'url-exists-nodejs'
+import http from 'http'
+import https from 'https'
+
+const checkLink = (link) => {
+  const protocol = link.startsWith('https') ? https : http
+
+  return new Promise((resolve) => {
+    protocol
+      .get(link, (res) => {
+        resolve(res.statusCode)
+      })
+      .on('error', () => {
+        resolve('Domain could not be resolved')
+      })
+  })
+}
 
 export default {
   name: 'html.brokenLinks',
   description: 'Checks if all external links are working',
-  html: async (payload, { test, config }, deps = { urlExists }) => {
-    const external = payload.aTags.filter((l) => (l.href.includes('http') && !l.href.includes(config.host)))
+  html: async (payload, { test, config, cache }, deps = { checkLink }) => {
+    const external = payload.aTags.filter(
+      (l) => l.href.includes('http') && !l.href.includes(config.host),
+    )
 
     for (let i = 0; i < external.length; i++) {
       const l = external[i]
-      const exists = await deps.urlExists(l.href) 
-      test(
-        assert.ok,
-        exists,
-        `External URL ${l.href} does not seem to be online`,
-      )
+
+      const cacheKey = `brokenLinks-${l.href}`
+      let response
+
+      if (!cache.get(cacheKey)) {
+        response = await deps.checkLink(l.href)
+        cache.push(cacheKey, response)
+      } else {
+        response = cache.get(cacheKey)
+      }
+
+      test(assert.ok, response === 200, `Broken link: ${l.href} (${response})`)
     }
   },
 }

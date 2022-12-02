@@ -25,6 +25,10 @@ export const Cache = {
     return this.entries[name].includes(value)
   },
 
+  get: function (name) {
+    return this.entries[name] || false
+  },
+
   includesHowOften: function (name, value) {
     if (!Object.prototype.hasOwnProperty.call(this.entries, name)) return 0
     return this.entries[name].filter((v) => v === value).length
