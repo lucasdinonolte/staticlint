@@ -1,10 +1,10 @@
 import assert from 'assert'
-import { checkLink } from '../../../util/checkUrl.js'
+import { checkUrl } from '../../../util/checkUrl.js'
 
 export default {
   name: 'html.brokenLinks',
   description: 'Checks if all external links are working',
-  html: async (payload, { test, config, cache }, deps = { checkLink }) => {
+  html: async (payload, { test, config, cache }, deps = { checkUrl }) => {
     const external = payload.aTags.filter(
       (l) => l.href.includes('http') && !l.href.includes(config.host),
     )
@@ -16,17 +16,13 @@ export default {
       let response
 
       if (!cache.get(cacheKey)) {
-        response = await deps.checkLink(l.href)
+        response = await deps.checkUrl(l.href)
         cache.set(cacheKey, response)
       } else {
         response = cache.get(cacheKey)
       }
 
-      test(
-        assert.ok,
-        typeof response === 'number' && response < 400,
-        `Broken link: ${l.href}`,
-      )
+      test(assert.ok, response, `Broken link: ${l.href}`)
     }
   },
 }

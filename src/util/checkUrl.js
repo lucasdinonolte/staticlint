@@ -11,7 +11,8 @@ const checkLink = (link) => {
 
     protocol
       .get(link, (res) => {
-        resolve(res.statusCode)
+        const statusCode = res.statusCode
+        resolve(typeof statusCode === 'number' && statusCode < 400)
       })
       .on('error', () => {
         resolve(false)

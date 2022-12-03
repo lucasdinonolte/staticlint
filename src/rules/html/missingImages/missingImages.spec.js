@@ -3,38 +3,42 @@ import rule from './rule.js'
 import runTestForRule from '../../../util/testRule.js'
 
 describe('html.missingImages', () => {
-  let urlExists
+  let checkUrl, cache
 
   beforeEach(() => {
-    urlExists = vi.fn(async (url) => url)
+    checkUrl = vi.fn(async (url) => url)
+    cache = {
+      set: vi.fn(),
+      get: vi.fn(() => false),
+    }
   })
 
   it('should return an error for a missing external image', async () => {
-    urlExists.mockImplementationOnce(() => false)
+    checkUrl.mockImplementationOnce(() => false)
 
     let results = await runTestForRule(
       rule,
       '<img src="http://broken-link.de/foo.png" alt="broken" />',
       {},
-      {},
-      { urlExists },
+      cache,
+      { checkUrl },
     )
 
-    expect(urlExists).toHaveBeenCalledWith('http://broken-link.de/foo.png')
+    expect(checkUrl).toHaveBeenCalledWith('http://broken-link.de/foo.png')
     expect(results.length).toBe(1)
   })
 
   it('should not return an error for internal images', async () => {
-    urlExists.mockImplementationOnce(() => false)
+    checkUrl.mockImplementationOnce(() => false)
     let results = await runTestForRule(
       rule,
       '<img src="https://example.com/foo.png" alt="Foo" /><img src="/foo.png" alt="Foo"/>',
       { host: 'https://example.com' },
-      {},
-      { urlExists },
+      cache,
+      { checkUrl },
     )
 
-    expect(urlExists).not.toHaveBeenCalled()
+    expect(checkUrl).not.toHaveBeenCalled()
     expect(results.length).toBe(0)
   })
 })

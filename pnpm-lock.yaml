@@ -19,7 +19,6 @@ specifiers:
   log-update: ^5.0.1
   prettier: ^2.7.1
   sade: ^1.8.1
-  url-exists-nodejs: ^0.2.4
   vitest: ^0.9.3
 
 dependencies:
@@ -33,7 +32,6 @@ dependencies:
   lodash.merge: 4.6.2
   log-update: 5.0.1
   sade: 1.8.1
-  url-exists-nodejs: 0.2.4
 
 devDependencies:
   '@changesets/cli': 2.22.0
@@ -3091,10 +3089,6 @@ packages:
     dependencies:
       punycode: 2.1.1
     dev: true
-
-  /url-exists-nodejs/0.2.4:
-    resolution: {integrity: sha512-j0X68SGGcdWxOZMQQ04UCLb11o5LVWu5WzZNMrDixPdKiH4g0cD0JLAJsAz4ifzN8s+mcDFrsGp2efBsn+ZYbQ==}
-    dev: false
 
   /util-deprecate/1.0.2:
     resolution: {integrity: sha1-RQ1Nyfpw3nMnYvvS1KKJgUGaDM8=}
