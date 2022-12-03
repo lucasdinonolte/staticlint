@@ -8,6 +8,7 @@ import url from 'url'
 import groupBy from 'lodash.groupby'
 import inquirer from 'inquirer'
 import { performance } from 'perf_hooks'
+import logUpdate from 'log-update'
 
 import performTests, { buildRulesFromConfig } from './index.js'
 import { mergeConfigurations } from './configuration.js'
@@ -31,6 +32,7 @@ prog
   .command('check <dir>', '', { default: true })
   .describe('Checks the output of a SSG for common issues.')
   .option('--config', 'Path to custom config file')
+  .option('--verbose', 'Show more information')
   .option(
     '--host',
     'Production URL. If set it overrides the host set in your config file',
@@ -45,9 +47,19 @@ prog
     // Flag overrides config
     if (opts.host) config.host = opts.host
 
+    const logger = opts.verbose
+      ? (msg, replace) => {
+          if (replace) {
+            logUpdate(msg)
+          } else {
+            console.log(msg)
+          }
+        }
+      : () => null
+
     // Run the tests
     const { errors, warnings } = await performTests(dir, config, {
-      showProgress: true,
+      logger,
     })
 
     // Output the errors and warnings
@@ -63,9 +75,11 @@ prog
       })
     }
 
+    if (opts.verbose) console.log('\n\nResults:\n')
+
     for (const [fileName, messages] of Object.entries(output)) {
       const fName = fileName.replace(dir, '')
-      console.log(`${chalk.grey(dir)}${chalk.white.bold(fName)}`)
+      console.log(chalk.white.bold(fName))
       outputMessages(messages)
       console.log('')
     }

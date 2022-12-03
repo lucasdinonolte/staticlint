@@ -23,7 +23,8 @@
     "changeset": "changeset",
     "version": "changeset version",
     "publish": "changeset publish",
-    "create:rule": "node util/createRule.js"
+    "create:rule": "node util/createRule.js",
+    "ci": "pnpm run lint && pnpm run test && pnpm run coverage"
   },
   "bin": {
     "staticlint": "src/bin.js"

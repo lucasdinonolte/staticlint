@@ -1,20 +1,5 @@
 import assert from 'assert'
-import http from 'http'
-import https from 'https'
-
-const checkLink = (link) => {
-  const protocol = link.startsWith('https') ? https : http
-
-  return new Promise((resolve) => {
-    protocol
-      .get(link, (res) => {
-        resolve(res.statusCode)
-      })
-      .on('error', () => {
-        resolve(false)
-      })
-  })
-}
+import { checkLink } from '../../../util/checkUrl.js'
 
 export default {
   name: 'html.brokenLinks',

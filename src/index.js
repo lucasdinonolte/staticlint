@@ -3,7 +3,6 @@ import path from 'path'
 import glob from 'glob'
 import groupBy from 'lodash.groupby'
 import memoize from 'lodash.memoize'
-import logUpdate from 'log-update'
 
 import { testFolder, testHtmlFile, testFile } from './tester.js'
 import { getRuleByName } from './rules.js'
@@ -100,7 +99,7 @@ export const buildErrorMessages = (file, messages, severity = 'error') => {
 export default async function (
   dir,
   _config = {},
-  { showProgress = false } = {},
+  { logger = () => null } = {},
 ) {
   // Check if the target dir exists
   if (!fs.existsSync(dir)) throw new Error(`${dir} does not exist`)
@@ -115,6 +114,7 @@ export default async function (
   const files = {}
 
   // First it performs rules from the folder namespace
+  logger('Running folder tests')
   const folderResults = await testFolder(dir, folderRules, { config })
   files[dir] = {
     errors: folderResults.errors,
@@ -131,9 +131,7 @@ export default async function (
     for (let i = 0; i < filesToTest.length; i++) {
       const file = filesToTest[i]
 
-      if (showProgress) {
-        logUpdate(`(${i + 1}/${filesToTest.length})\ttesting ${file}`)
-      }
+      logger(`(${i + 1}/${filesToTest.length})\ttesting ${file}`, true)
 
       // Check if it's really a file and not a folder with a file extension
       if (!fs.lstatSync(file).isDirectory()) {
@@ -144,6 +142,7 @@ export default async function (
   }
 
   // Next it performs rules from the html namespace
+  logger('Running HTML tests')
   await runFileTester('**/*.html', {
     rules: htmlRules,
     testRunner: testHtmlFile,
@@ -153,6 +152,7 @@ export default async function (
   // Next it performs generic file rules
   const fileRulesByGlob = groupBy(fileRules, 'files')
 
+  logger('Running generic file tests')
   for (const [fileGlob, rules] of Object.entries(fileRulesByGlob)) {
     await runFileTester(fileGlob, {
       rules,
