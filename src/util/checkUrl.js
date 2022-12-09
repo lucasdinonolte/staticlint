@@ -3,7 +3,7 @@ import https from 'https'
 
 import { isValidUrl } from './string.js'
 
-const checkLink = (link) => {
+const checkUrl = (link) => {
   const protocol = link.startsWith('https') ? https : http
 
   return new Promise((resolve) => {
@@ -20,4 +20,4 @@ const checkLink = (link) => {
   })
 }
 
-export { checkLink }
+export { checkUrl }
