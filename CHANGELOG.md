@@ -2,7 +2,9 @@
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## UNRELEASED
+
+## 1.0.0-rc5
 
 ### Added
 - feat: improve developer experience of scaffold command by adding an interactive prompt
