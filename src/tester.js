@@ -115,4 +115,16 @@ const testFile = testFactory({
   },
 })
 
-export { testHtmlFile, testFile, testFolder, testFactory, htmlRuleRunner }
+const buildTestJob = ({ file, testRunner, rules, config, Cache }) => ({
+  file,
+  run: async () => testRunner(file, rules, { config, cache: Cache }),
+})
+
+export {
+  testHtmlFile,
+  testFile,
+  testFolder,
+  testFactory,
+  htmlRuleRunner,
+  buildTestJob,
+}

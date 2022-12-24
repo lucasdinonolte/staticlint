@@ -4,7 +4,7 @@ import glob from 'glob'
 import groupBy from 'lodash.groupby'
 import memoize from 'lodash.memoize'
 
-import { testFolder, testHtmlFile, testFile } from './tester.js'
+import { buildTestJob, testFolder, testHtmlFile, testFile } from './tester.js'
 import { getRuleByName } from './rules.js'
 import { defaultConfig } from './defaultConfig.js'
 import { ERRORS, WARNINGS, ERROR } from './constants.js'
@@ -127,18 +127,31 @@ export default async function (
     { rules, testRunner, ignoreFiles },
   ) => {
     const filesToTest = buildFilesToTest(dir, { fileGlob, ignoreFiles })
+    const jobs = []
 
     for (let i = 0; i < filesToTest.length; i++) {
       const file = filesToTest[i]
 
-      logger(`(${i + 1}/${filesToTest.length})\ttesting ${file}`, true)
-
       // Check if it's really a file and not a folder with a file extension
       if (!fs.lstatSync(file).isDirectory()) {
-        const results = await testRunner(file, rules, { config, cache: Cache })
-        files[file] = { errors: results.errors, warnings: results.warnings }
+        const job = buildTestJob({
+          file,
+          testRunner,
+          rules,
+          config,
+          Cache,
+        })
+
+        const jobRunner = async () => {
+          const results = await job.run()
+          files[file] = { errors: results.errors, warnings: results.warnings }
+        }
+
+        jobs.push(jobRunner())
       }
     }
+
+    await Promise.all(jobs)
   }
 
   // Next it performs rules from the html namespace
