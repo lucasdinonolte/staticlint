@@ -18,13 +18,27 @@ describe('Configuration', () => {
       await mergeConfigurations('./specs/fixtures/empty.config.js'),
     ).toStrictEqual({
       host: 'https://spec-host.com/',
-      ...defaultConfig,
+      ignoreFiles: [],
+      customRules: [],
+      rules: defaultConfig.rules,
+      display: [],
+      failOn: [],
     })
   })
 
-  it('should fail if a non-valid config is given', async () => {
-    await expect(
-      mergeConfigurations('./specs/fixtures/faulty.config.js'),
-    ).rejects.toThrowError('Invalid configuration')
+  it('should merge rules, but override all other config fields with user config', async () => {
+    expect(
+      await mergeConfigurations('./specs/fixtures/sample.config.js'),
+    ).toStrictEqual({
+      host: 'https://spec-host.com/',
+      ignoreFiles: [],
+      customRules: [],
+      rules: {
+        ...defaultConfig.rules,
+        'seo.canonical': false,
+      },
+      display: ['warnings'],
+      failOn: [],
+    })
   })
 })

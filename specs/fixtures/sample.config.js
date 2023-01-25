@@ -2,7 +2,9 @@ export default {
   host: 'https://spec-host.com/',
   ignoreRules: [],
   customRules: [],
-  rules: [],
-  display: [],
+  rules: {
+    'seo.canonical': false,
+  },
+  display: ['warnings'],
   failOn: [],
 }

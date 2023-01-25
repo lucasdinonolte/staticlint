@@ -4,6 +4,16 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## UNRELEASED
 
+### Fixed
+
+- fixed merging of user config with default config. Rules are merged, for all other options the user config is overwriting the default configuration.
+
+## 1.0.0-rc6
+
+### Changed
+
+- refactor: test runs are now somewhat parallelized using `Promise.all`
+
 ## 1.0.0-rc5
 
 ### Added

@@ -44,14 +44,19 @@ const mergeConfigurations = async (externalConfig = null) => {
     ? path.join(process.cwd(), externalConfig)
     : _searchExternalConfiguration()
 
-  const config = merge(
-    defaultConfig,
-    await _loadExternalConfiguration(externalConfigToUse),
+  const externalConfigObject = await _loadExternalConfiguration(
+    externalConfigToUse,
   )
 
-  // Check if config.rules is a non-empty object
-  if (typeof config.rules !== 'object' || Array.isArray(config.rules)) {
-    throw new Error('Invalid configuration: config.rules must be an object.')
+  // Config merging needs to be more granular then simply using merge,
+  // because some things should be overridden by the user config.
+  const config = {
+    host: externalConfigObject.host ?? defaultConfig.host,
+    ignoreFiles: externalConfigObject.ignoreFiles ?? defaultConfig.ignoreFiles,
+    customRules: externalConfigObject.customRules ?? defaultConfig.customRules,
+    rules: merge(defaultConfig.rules, externalConfigObject.rules ?? {}),
+    display: externalConfigObject.display ?? defaultConfig.display,
+    failOn: externalConfigObject.failOn ?? defaultConfig.failOn,
   }
 
   return config
