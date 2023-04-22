@@ -6,7 +6,7 @@ export default {
   description: 'Checks if all external links are working',
   html: async (payload, { test, config, cache }, deps = { checkUrl }) => {
     const external = payload.aTags.filter(
-      (l) => l.href.includes('http') && !l.href.includes(config.host),
+      (l) => l.href?.includes('http') && !l.href?.includes(config.host),
     )
 
     for (let i = 0; i < external.length; i++) {

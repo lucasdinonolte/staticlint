@@ -41,4 +41,17 @@ describe('html.brokenLinks', () => {
     expect(checkUrl).not.toHaveBeenCalled()
     expect(results.length).toBe(0)
   })
+
+  it('should not return an error for a link without href attribute', async () => {
+    let results = await runTestForRule(
+      rule,
+      '<a>Foo</a> <a>Foo</a>',
+      { host: 'https://example.com' },
+      cache,
+      { checkUrl },
+    )
+
+    expect(checkUrl).not.toHaveBeenCalled()
+    expect(results.length).toBe(0)
+  })
 })
