@@ -4,6 +4,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## UNRELEASED
 
+### Added
+
+- adds a rule that checks for explicit width and height on image tags in order to prevent layout shifts.
+
 ### Fixed
 
 - fixed merging of user config with default config. Rules are merged, for all other options the user config is overwriting the default configuration.

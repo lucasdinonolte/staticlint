@@ -11,6 +11,7 @@ export const defaultConfig = {
     'html.favicon': ERROR,
     'html.img.alt.present': ERROR,
     'html.img.alt.notEmpty': WARNING,
+    'html.img.sizeAttributes': WARNING,
     'html.internalLinks.lowercase': ERROR,
     'html.internalLinks.noFollow': ERROR,
     'html.internalLinks.trailingSlash': ERROR,

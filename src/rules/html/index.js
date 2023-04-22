@@ -2,6 +2,7 @@ import brokenLinks from './brokenLinks/rule.js'
 import { doctypePresent, doctypeHtml5 } from './doctype/rule.js'
 import favicon from './favicon/rule.js'
 import { imgAltPresent, imgAltNotEmpty } from './imgAlt/rule.js'
+import { imgSizeAttributes } from './imgSizeAttributes/rule.js'
 import {
   internalLinksLowercase,
   internalLinksTrailinsSlash,
@@ -34,6 +35,7 @@ export default [
   favicon,
   imgAltPresent,
   imgAltNotEmpty,
+  imgSizeAttributes,
   internalLinksLowercase,
   internalLinksNoFollow,
   internalLinksTrailinsSlash,
