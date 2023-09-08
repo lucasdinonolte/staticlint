@@ -4,6 +4,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## UNRELEASED
 
+## 1.0.0-rc7
+
 ### Added
 
 - adds a rule that checks for explicit width and height on image tags in order to prevent layout shifts.

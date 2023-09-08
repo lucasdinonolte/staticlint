@@ -1,6 +1,6 @@
 {
   "name": "staticlint",
-  "version": "1.0.0-rc6",
+  "version": "1.0.0-rc7",
   "description": "A testing suite for statically generated websites",
   "main": "src/index.js",
   "type": "module",
