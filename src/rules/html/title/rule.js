@@ -37,6 +37,7 @@ export const titleIdealLength = {
   description: 'Checks if title tag is between 10 and 70 characters',
   html: (payload, { test }) => {
     const titles = payload.title
+    if (titles.length !== 1) return
 
     test(
       assert.ok,
@@ -57,6 +58,7 @@ export const titleMaxLength = {
   description: 'Checks if title tag is not above 200 characters',
   html: (payload, { test }) => {
     const titles = payload.title
+    if (titles.length !== 1) return
 
     test(
       assert.ok,
@@ -71,6 +73,7 @@ export const titleStopWords = {
   description: 'Checks if the title contains any english stopwords',
   html: (payload, { test }) => {
     const titles = payload.title
+    if (titles.length !== 1) return
 
     const stopWords = [
       'a',

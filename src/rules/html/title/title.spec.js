@@ -56,13 +56,40 @@ describe('html.title.maxLength', () => {
       'Something could be wrong this title tag is over 200 chars.',
     )
   })
+
+  it('should ignore empty titles', async () => {
+    let results = await runTestForRule(
+      titleMaxLength,
+      '<html><head><title></title></head></html>',
+    )
+    expect(results.length).toBe(0)
+  })
+
+  it('should ignore missing titles', async () => {
+    let results = await runTestForRule(
+      titleMaxLength,
+      '<html><head></head></html>',
+    )
+    expect(results.length).toBe(0)
+  })
 })
 
-describe('html.title.idength', () => {
+describe('html.title.idealLength', () => {
   it('should return a warning for title tag shorter than 10 characters', async () => {
     let results = await runTestForRule(
       titleIdealLength,
       '<html><head><title>Bold</title></head></html>',
+    )
+    expect(results.length).toBe(1)
+    expect(results[0]).toBe(
+      'This title tag is shorter than the recommended minimum limit of 10.',
+    )
+  })
+
+  it('should return for an empty title tag', async () => {
+    let results = await runTestForRule(
+      titleIdealLength,
+      '<html><head><title></title></head></html>',
     )
     expect(results.length).toBe(1)
     expect(results[0]).toBe(
@@ -80,6 +107,14 @@ describe('html.title.idength', () => {
       'This title tag is longer than the recommended limit of 70.',
     )
   })
+
+  it('should ignore missing titles', async () => {
+    let results = await runTestForRule(
+      titleIdealLength,
+      '<html><head></head></html>',
+    )
+    expect(results.length).toBe(0)
+  })
 })
 
 describe('html.title.stopWords', () => {
@@ -90,5 +125,21 @@ describe('html.title.stopWords', () => {
     )
     expect(results.length).toBe(2)
     expect(results[0]).toContain('Title tag includes stopword')
+  })
+
+  it('should ignore empty titles', async () => {
+    let results = await runTestForRule(
+      titleStopWords,
+      '<html><head><title></title></head></html>',
+    )
+    expect(results.length).toBe(0)
+  })
+
+  it('should ignore missing titles', async () => {
+    let results = await runTestForRule(
+      titleStopWords,
+      '<html><head></head></html>',
+    )
+    expect(results.length).toBe(0)
   })
 })
