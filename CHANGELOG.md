@@ -4,6 +4,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## UNRELEASED
 
+## 1.0.0-rc8
+
 ### Fixed
 
 - Prevent title length rules from failing for missing title tags
