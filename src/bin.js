@@ -49,12 +49,12 @@ prog
 
     const logger = opts.verbose
       ? (msg, replace) => {
-          if (replace) {
-            logUpdate(msg)
-          } else {
-            console.log(msg)
-          }
+        if (replace) {
+          logUpdate(msg)
+        } else {
+          console.log(msg)
         }
+      }
       : () => null
 
     // Run the tests
@@ -64,7 +64,15 @@ prog
 
     // Output the errors and warnings
     const output = groupBy([errors, warnings].flat(), 'file')
-    const outputMessages = function (messages) {
+
+    const shouldDisplayFile = (messages) => {
+      const matchingMessages = messages.filter((m) =>
+        config.display.includes(m.severity),
+      )
+      return matchingMessages && matchingMessages.length > 0
+    }
+
+    const outputMessages = function(messages) {
       messages.forEach((m) => {
         if (config.display.includes(m.severity))
           console.log(
@@ -78,6 +86,7 @@ prog
     if (opts.verbose) console.log('\n\nResults:\n')
 
     for (const [fileName, messages] of Object.entries(output)) {
+      if (!shouldDisplayFile(messages)) continue
       const fName = fileName.replace(dir, '')
       console.log(chalk.white.bold(fName))
       outputMessages(messages)
@@ -226,8 +235,8 @@ prog
   display: [${display}],
 
   // If ${failOn
-    .split(', ')
-    .join(' or ')} occur let the CLI exit with an error exit code
+        .split(', ')
+        .join(' or ')} occur let the CLI exit with an error exit code
   // This will stop your build in a CI and prevent a broken site
   // from being deployed.
   failOn: [${failOn}], 
