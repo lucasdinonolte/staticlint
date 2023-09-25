@@ -6,7 +6,8 @@ export default {
   description: 'Checks for missing external images',
   html: async (payload, { test, config, cache }, deps = { checkUrl }) => {
     const external = payload.imgs.filter(
-      (i) => i.src.includes('http') && !i.src.includes(config.host),
+      (i) =>
+        i.src && i.src.startsWith('http') && !i.src.startsWith(config.host),
     )
 
     for (let i = 0; i < external.length; i++) {
