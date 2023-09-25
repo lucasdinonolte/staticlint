@@ -4,10 +4,16 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## UNRELEASED
 
+## 1.0.0-rc9
+
 ### Fixed
 
 - Prevent missing image rule from failing if no src attribute is present
 - Prevent missing image rule from failing if src is inline base64 string containing the character sequence `http`
+
+### Changed
+
+- Only output files that have errors or warning (depending on the output display mode)
 
 ## 1.0.0-rc8
 
