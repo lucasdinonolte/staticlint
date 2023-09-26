@@ -4,6 +4,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## UNRELEASED
 
+## 1.0.0-rc11
+
+### Changed
+
+- Explicitly exit with zero exit code if check has passed
+
 ## 1.0.0-rc10
 
 ### Added

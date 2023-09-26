@@ -43,5 +43,5 @@ export const defaultConfig = {
     'file.maxImageSize': ERROR,
   },
   display: [ERRORS, WARNINGS],
-  failOn: [ERRORS],
+  failOn: [],
 }

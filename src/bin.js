@@ -121,6 +121,9 @@ prog
     ) {
       console.log(chalk.bold.red('\nCheck failed. See above for details'))
       process.exit(1)
+    } else {
+      console.log(chalk.bold.green('\nStaticlint check passed.'))
+      process.exit(0)
     }
   })
 
