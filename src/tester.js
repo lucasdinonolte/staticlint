@@ -1,4 +1,5 @@
 import { parseHtml } from './util/html.js'
+import { isHidden } from './util/a11y.js'
 import { ERROR } from './constants.js'
 
 /**
@@ -93,9 +94,13 @@ const htmlRuleRunner = async ({
 }) => {
   const { config, cache } = dependencies
   const { results, $attributes } = input
+  const utils = {
+    isHidden,
+  }
+
   await rule.html(
     results,
-    { test, lint, config, $attributes, cache },
+    { test, lint, config, $attributes, cache, utils },
     depsForRule,
   )
 }

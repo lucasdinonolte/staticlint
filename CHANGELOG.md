@@ -4,9 +4,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## UNRELEASED
 
+### Added
+
+- Added a11y `isHidden` helper
+
 ### Changed
 
+- Expose util to HTML rules, that has helper functions to be used in rules
 - Ignore semantically hidden images in image alt rule
+- Ignore semantically hidden links in link text rule
 
 ## 1.0.0-rc9
 

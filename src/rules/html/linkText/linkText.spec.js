@@ -42,4 +42,12 @@ describe('html.linkText', () => {
     )
     expect(results.length).toBe(1)
   })
+
+  it('should ignore links that are semantically hidden', async () => {
+    let results = await runTestForRule(
+      rule,
+      '<a href="/test" aria-hidden="true"><img src="/logo.png" alt="Our logo" /></a><a href="/test" hidden><img src="/logo.png" alt="Our logo" /></a>',
+    )
+    expect(results.length).toBe(0)
+  })
 })

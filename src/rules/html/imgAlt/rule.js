@@ -1,12 +1,11 @@
 import assert from 'assert'
-import { isHidden } from '../../../util/a11y'
 
 export const imgAltPresent = {
   name: 'html.img.alt.present',
   description: 'Validates presence of alt tags for all images',
-  html: (payload, { test }) => {
+  html: (payload, { test, utils }) => {
     payload.imgs.forEach((i) => {
-      if (isHidden(i)) return
+      if (utils.isHidden(i)) return
 
       test(
         assert.ok,
@@ -20,9 +19,9 @@ export const imgAltPresent = {
 export const imgAltNotEmpty = {
   name: 'html.img.alt.notEmpty',
   description: 'Checks for empty alt tags',
-  html: (payload, { test }) => {
+  html: (payload, { test, utils }) => {
     payload.imgs.forEach((i) => {
-      if (isHidden(i)) return
+      if (utils.isHidden(i)) return
 
       test(
         assert.ok,

@@ -3,8 +3,10 @@ import assert from 'assert'
 export default {
   name: 'html.linkText',
   description: 'Validates that all links have discernable text',
-  html: (payload, { test }) => {
+  html: (payload, { test, utils }) => {
     payload.aTags.forEach((a) => {
+      if (utils.isHidden(a)) return
+
       test(
         assert.ok,
         a.innerText !== '' || !!a['aria-label'],
