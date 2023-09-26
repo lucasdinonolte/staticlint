@@ -7,6 +7,15 @@ describe('img.alt.present', () => {
     let results = await runTestForRule(imgAltPresent, '<img src="foo.jpg" />')
     expect(results.length).toBe(1)
   })
+
+  it('should ignore images that are semantically hidden', async () => {
+    let results = await runTestForRule(
+      imgAltPresent,
+      '<img aria-hidden="true" src="foo.jpg" /><img hidden src="foo.jpg" />',
+    )
+
+    expect(results.length).toBe(0)
+  })
 })
 
 describe('img.alt.notEmpty', () => {
@@ -16,5 +25,14 @@ describe('img.alt.notEmpty', () => {
       '<img src="foo.jpg" alt="" />',
     )
     expect(results.length).toBe(1)
+  })
+
+  it('should ignore images that are semantically hidden', async () => {
+    let results = await runTestForRule(
+      imgAltPresent,
+      '<img aria-hidden="true" src="foo.jpg" alt="" /><img hidden src="foo.jpg" alt="" />',
+    )
+
+    expect(results.length).toBe(0)
   })
 })

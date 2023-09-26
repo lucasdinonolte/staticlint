@@ -4,6 +4,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## UNRELEASED
 
+### Changed
+
+- Ignore semantically hidden images in image alt rule
+
 ## 1.0.0-rc9
 
 ### Fixed
