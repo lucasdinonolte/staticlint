@@ -12,6 +12,11 @@ import logUpdate from 'log-update'
 
 import performTests, { buildRulesFromConfig } from './index.js'
 import { mergeConfigurations } from './configuration.js'
+import {
+  clearResultsCache,
+  loadResultsCache,
+  writeResultsCache,
+} from './cache.js'
 import { defaultConfig } from './defaultConfig.js'
 import { ERRORS, WARNINGS, ICONS } from './constants.js'
 import { allRules } from './rules.js'
@@ -44,6 +49,9 @@ prog
     // Load external config and merge with default config
     const config = await mergeConfigurations(opts.config)
 
+    // Load cached results from previous runs
+    const cache = loadResultsCache()
+
     // Flag overrides config
     if (opts.host) config.host = opts.host
 
@@ -58,9 +66,17 @@ prog
       : () => null
 
     // Run the tests
-    const { errors, warnings } = await performTests(dir, config, {
-      logger,
-    })
+    const { errors, warnings, runCache } = await performTests(
+      dir,
+      config,
+      cache,
+      {
+        logger,
+      },
+    )
+
+    // Write the cache to disk
+    writeResultsCache(runCache)
 
     // Output the errors and warnings
     const output = groupBy([errors, warnings].flat(), 'file')
@@ -140,6 +156,16 @@ prog
       'The current configuration will run staticlint with the following rules\n',
     )
     console.log(rules.join('\n'))
+  })
+
+prog
+  .command('clear', '')
+  .describe('Clears the staticlint cache')
+  .action(() => {
+    clearResultsCache()
+    console.log(
+      'Cleared .staticlintcache.json. The next run will run all tests again.',
+    )
   })
 
 prog

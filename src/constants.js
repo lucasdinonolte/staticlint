@@ -9,4 +9,6 @@ const ICONS = {
   warnings: '!',
 }
 
-export { ERRORS, WARNINGS, ERROR, WARNING, ICONS }
+const CACHE_FILE = '.staticlintcache.json'
+
+export { CACHE_FILE, ERRORS, WARNINGS, ERROR, WARNING, ICONS }

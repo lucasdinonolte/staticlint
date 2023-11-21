@@ -4,6 +4,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## UNRELEASED
 
+### Added
+
+- Added results cache in `.staticlintcache.json` that caches lint results across runs for HTML files (based on the file’s content-hash)
+
 ## 1.0.0-rc11
 
 ### Changed

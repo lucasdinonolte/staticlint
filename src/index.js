@@ -8,32 +8,33 @@ import { buildTestJob, testFolder, testHtmlFile, testFile } from './tester.js'
 import { getRuleByName } from './rules.js'
 import { defaultConfig } from './defaultConfig.js'
 import { ERRORS, WARNINGS, ERROR } from './constants.js'
+import { generateCacheKey } from './cache.js'
 
 // The cache provides a way of persisting data between tests.
 // Check rultes/seo/uniqueTitle for an example using the cache.
 export const Cache = {
   entries: {},
 
-  push: function (name, value) {
+  push: function(name, value) {
     if (!Object.prototype.hasOwnProperty.call(this.entries, name))
       this.entries[name] = []
     this.entries[name].push(value)
   },
 
-  includes: function (name, value) {
+  includes: function(name, value) {
     if (!Object.prototype.hasOwnProperty.call(this.entries, name)) return false
     return this.entries[name].includes(value)
   },
 
-  set: function (name, value) {
+  set: function(name, value) {
     this.entries[name] = value
   },
 
-  get: function (name) {
+  get: function(name) {
     return this.entries[name] || false
   },
 
-  includesHowOften: function (name, value) {
+  includesHowOften: function(name, value) {
     if (!Object.prototype.hasOwnProperty.call(this.entries, name)) return 0
     return this.entries[name].filter((v) => v === value).length
   },
@@ -96,9 +97,10 @@ export const buildErrorMessages = (file, messages, severity = 'error') => {
  * @param directory to check
  * @param staticlint configuration object
  */
-export default async function (
+export default async function(
   dir,
   _config = {},
+  cachedResults = {},
   { logger = () => null } = {},
 ) {
   // Check if the target dir exists
@@ -112,6 +114,7 @@ export default async function (
   const htmlRules = buildRulesFromConfig(config, 'html')
 
   const files = {}
+  const runCache = { ...cachedResults }
 
   // First it performs rules from the folder namespace
   logger('Running folder tests')
@@ -124,7 +127,7 @@ export default async function (
   // Utility to build file tester
   const runFileTester = async (
     fileGlob,
-    { rules, testRunner, ignoreFiles },
+    { rules, testRunner, ignoreFiles, withRunCache = false },
   ) => {
     const filesToTest = buildFilesToTest(dir, { fileGlob, ignoreFiles })
     const jobs = []
@@ -132,7 +135,6 @@ export default async function (
     for (let i = 0; i < filesToTest.length; i++) {
       const file = filesToTest[i]
 
-      // Check if it's really a file and not a folder with a file extension
       if (!fs.lstatSync(file).isDirectory()) {
         const job = buildTestJob({
           file,
@@ -143,8 +145,27 @@ export default async function (
         })
 
         const jobRunner = async () => {
-          const results = await job.run()
-          files[file] = { errors: results.errors, warnings: results.warnings }
+          let cacheKey
+          let cacheResult
+
+          if (withRunCache) {
+            cacheKey = generateCacheKey(file)
+            cacheResult = runCache[cacheKey] ?? null
+          }
+
+          if (cacheResult) {
+            logger(`Using cached result for ${file}`)
+            files[file] = { ...cacheResult }
+            return
+          }
+
+          const { errors, warnings } = await job.run()
+          files[file] = { errors, warnings }
+
+          if (withRunCache && cacheKey) {
+            logger(`Caching result for ${file}`)
+            runCache[cacheKey] = { errors, warnings }
+          }
         }
 
         jobs.push(jobRunner())
@@ -160,6 +181,7 @@ export default async function (
     rules: htmlRules,
     testRunner: testHtmlFile,
     ignoreFiles: config.ignoreFiles,
+    withRunCache: true,
   })
 
   // Next it performs generic file rules
@@ -188,5 +210,6 @@ export default async function (
   return {
     errors: _tempErrors.flat(),
     warnings: _tempWarnings.flat(),
+    runCache,
   }
 }
